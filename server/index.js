@@ -18,7 +18,22 @@ import authRouter from "./routes/auth.routes.js";
 const app = express();
 
 // Middleware
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+const allowedOrigins = [
+  CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://flavorfusion-2dr4afkh3-pratham7723s-projects.vercel.app',
+  'https://flavorfusion-rkrln3szt-pratham7723s-projects.vercel.app',
+  'https://flavorfusion-1yaw2py3c-pratham7723s-projects.vercel.app',
+  'https://flavorfusion-hge3u8md1-pratham7723s-projects.vercel.app',
+  'https://flavorfusion-m8y40xqqh-pratham7723s-projects.vercel.app',
+  'https://flavorfusion-one.vercel.app'
+];
+
+app.use(cors({ 
+  origin: allowedOrigins, 
+  credentials: true 
+}));
 app.use(express.json());
 app.use(cookieParser());
 
