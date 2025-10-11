@@ -1,4 +1,4 @@
-import Menu from "../models/Menu.modal.js";
+import Menu from "../models/menu.modal.js";
 
 // Get all menu items
 export const getMenuItems = async (req, res, next) => {

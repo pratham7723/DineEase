@@ -1,5 +1,5 @@
 import Order from '../models/order.model.js';
-import Menu from "../models/Menu.modal.js";
+import Menu from "../models/menu.modal.js";
 
 // Helper function to get date ranges
 const getDateRange = (days) => {
