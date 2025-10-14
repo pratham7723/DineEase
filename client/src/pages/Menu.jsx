@@ -31,6 +31,28 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+// AR model configuration
+const LOCAL_MODELS = {
+  "Margerita": "/models/pizza.glb",
+  "Burger": "/models/burger.glb",
+  "Softy": "/models/icecream.glb",
+  "Pina Colada": "/models/mocktail.glb",
+  "Veg Sandwich": "/models/sandwich.glb",
+  "Croissant": "/models/crossaint.glb",
+  "Garlic Bread": "/models/garlicbread.glb",
+  "Donut": "/models/donut.glb",
+  "Coca Cola": "/models/coke.glb",
+  "Red Velvet Pastry": "/models/redvelvet.glb",
+  "cappuccino": "/models/coffee_cup.glb",
+  "Cold Coffee": "/models/creamed_coffee.glb",
+  "Iced Coffee": "/models/ice_coffee.glb",
+  "Loaded Nachos": "/models/nachos.glb",
+  "Veg Overloaded Pizza": "/models/Tp Pizza.glb",
+  "Red Pepperoni Pizza": "/models/red peprika.glb",
+  "Chicken Momos": "/models/momo_food.glb",
+  "Veg Momos": "/models/momo_food.glb",
+};
+
 // Helper function to format INR
 const formatINR = (amount) => {
   return new Intl.NumberFormat('en-IN', {
@@ -615,7 +637,7 @@ const Menu = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {item.arModel ? (
+                        {(item.arModel || LOCAL_MODELS[item.name]) ? (
                           <div className="flex items-center gap-2">
                             <CheckCircle className="h-4 w-4 text-green-500" />
                             <span className="text-sm text-muted-foreground">Available</span>

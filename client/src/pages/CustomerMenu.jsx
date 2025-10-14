@@ -338,7 +338,7 @@ const CustomerMenu = () => {
       {/* Menu Items Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {filteredMenuItems.map((item) => (
-          <Card key={item._id} className="overflow-hidden">
+          <Card key={item._id} className={`overflow-hidden ${item.status !== "Available" ? "opacity-60" : ""}`}>
             <div className="w-full h-32 md:h-40 overflow-hidden">
               <img
                 src={item.photo}
@@ -350,9 +350,17 @@ const CustomerMenu = () => {
 
             <CardHeader className="pb-2">
               <CardTitle className="text-lg md:text-xl">{item.name}</CardTitle>
-              <Badge variant="secondary" className="w-fit">
-                {item.category}
-              </Badge>
+              <div className="flex gap-2">
+                <Badge variant="secondary" className="w-fit">
+                  {item.category}
+                </Badge>
+                <Badge 
+                  variant={item.status === "Available" ? "default" : "destructive"}
+                  className="w-fit"
+                >
+                  {item.status}
+                </Badge>
+              </div>
             </CardHeader>
 
             <CardContent className="pt-0">
@@ -365,9 +373,10 @@ const CustomerMenu = () => {
                   onClick={() => addToCart(item)}
                   className="w-full gap-2"
                   size="sm"
+                  disabled={item.status !== "Available"}
                 >
                   <ShoppingCart className="h-4 w-4" />
-                  Add to Cart
+                  {item.status === "Available" ? "Add to Cart" : "Out of Stock"}
                 </Button>
 
                 {(item.arModel || LOCAL_MODELS[item.name]) && (
