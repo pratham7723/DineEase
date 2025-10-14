@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import AppLayout from '../components/AppLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
+import { Plus, Edit, Trash2, Users } from 'lucide-react';
 
 const Staff = () => {
   const [staff, setStaff] = useState([]);
@@ -32,7 +43,7 @@ const Staff = () => {
   useEffect(() => {
     const fetchStaff = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/users', {
+        const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/users`, {
           headers: {
             'Content-Type': 'application/json',
             // Add if using auth:
@@ -53,6 +64,7 @@ const Staff = () => {
         setStaff(data);
       } catch (error) {
         console.error('Fetch error:', error);
+        toast.error(error.message || 'Failed to fetch staff');
         setError(error.message);
       } finally {
         setLoading(false);
@@ -76,12 +88,12 @@ const Staff = () => {
   const addStaff = async () => {
     // Validate required fields
     if (!newStaff.name || !newStaff.email || !newStaff.password) {
-      setError('Name, email, and password are required');
+      toast.error('Name, email, and password are required');
       return;
     }
   
     try {
-      const response = await fetch('http://localhost:8000/api/v1/users', {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newStaff)
@@ -101,9 +113,11 @@ const Staff = () => {
         role: 'Waiter', 
         phone: '' 
       });
+      toast.success('Staff member added successfully');
       setError(null);
     } catch (error) {
       console.error('Submission error:', error);
+      toast.error(error.message || 'Failed to add staff member');
       setError(error.message);
     }
   };
@@ -117,7 +131,7 @@ const Staff = () => {
         ...(editStaff.password && { password: editStaff.password })
       };
 
-      const response = await fetch(`http://localhost:8000/api/v1/users/${editStaff._id}`, {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/users/${editStaff._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData),
@@ -128,8 +142,10 @@ const Staff = () => {
 
       setStaff(staff.map((s) => (s._id === editStaff._id ? { ...s, ...updateData } : s)));
       setIsEditing(false);
+      toast.success('Staff member updated successfully');
     } catch (error) {
       console.error('Update Error:', error);
+      toast.error(error.message || 'Failed to update staff member');
       setError(error.message);
     }
   };
@@ -139,14 +155,16 @@ const Staff = () => {
     if (!window.confirm('Are you sure you want to delete this staff member?')) return;
     
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/users/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/users/${id}`, {
         method: 'DELETE',
       });
 
       if (!response.ok) throw new Error('Failed to delete staff');
 
       setStaff(staff.filter((s) => s._id !== id));
+      toast.success('Staff member deleted successfully');
     } catch (error) {
+      toast.error(error.message || 'Failed to delete staff member');
       setError(error.message);
     }
   };
@@ -166,258 +184,272 @@ const Staff = () => {
 
   return (
     <AppLayout>
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 min-w-0">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Staff Management</h2>
+          <div className="flex items-center gap-3">
+            <Users className="h-8 w-8 text-orange-600" />
+            <h2 className="text-3xl font-bold text-gray-800">Staff Management</h2>
+          </div>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
-            <p>{error}</p>
-            <button 
-              onClick={() => setError(null)} 
-              className="mt-2 text-red-700 hover:text-red-800 font-medium"
-            >
-              Dismiss
-            </button>
-          </div>
+          <Alert className="mb-6">
+            <AlertDescription className="flex justify-between items-center">
+              <span>{error}</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setError(null)}
+              >
+                Dismiss
+              </Button>
+            </AlertDescription>
+          </Alert>
         )}
 
         {/* Add Staff Form */}
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Add New Staff</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="Full Name" 
-                value={newStaff.name} 
-                onChange={(e) => handleInputChange(e, 'new')} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
-              />
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Add New Staff Member
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input 
+                  id="name"
+                  name="name" 
+                  placeholder="Full Name" 
+                  value={newStaff.name} 
+                  onChange={(e) => handleInputChange(e, 'new')} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email"
+                  name="email" 
+                  type="email"
+                  placeholder="Email Address" 
+                  value={newStaff.email} 
+                  onChange={(e) => handleInputChange(e, 'new')} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input 
+                  id="password"
+                  name="password" 
+                  type="password"
+                  placeholder="Password" 
+                  value={newStaff.password} 
+                  onChange={(e) => handleInputChange(e, 'new')} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select 
+                  name="role" 
+                  value={newStaff.role} 
+                  onValueChange={(value) => setNewStaff({...newStaff, role: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Waiter">Waiter</SelectItem>
+                    <SelectItem value="Chef">Chef</SelectItem>
+                    <SelectItem value="Manager">Manager</SelectItem>
+                    <SelectItem value="Owner">Owner</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input 
+                  id="phone"
+                  name="phone" 
+                  placeholder="Phone Number" 
+                  value={newStaff.phone} 
+                  onChange={(e) => handleInputChange(e, 'new')} 
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input 
-                type="email" 
-                name="email" 
-                placeholder="Email Address" 
-                value={newStaff.email} 
-                onChange={(e) => handleInputChange(e, 'new')} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input 
-                type="password" 
-                name="password" 
-                placeholder="Password" 
-                value={newStaff.password} 
-                onChange={(e) => handleInputChange(e, 'new')} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-              <select 
-                name="role" 
-                value={newStaff.role} 
-                onChange={(e) => handleInputChange(e, 'new')} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              >
-                <option value="Waiter">Waiter</option>
-                <option value="Chef">Chef</option>
-                <option value="Manager">Manager</option>
-                <option value="Owner">Owner</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input 
-                type="text" 
-                name="phone" 
-                placeholder="Phone Number" 
-                value={newStaff.phone} 
-                onChange={(e) => handleInputChange(e, 'new')} 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
-              />
-            </div>
-          </div>
-          <button 
-            onClick={addStaff} 
-            className="mt-2 bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors"
-          >
-            Add Staff Member
-          </button>
-        </div>
+            <Button 
+              onClick={addStaff} 
+              className="w-full md:w-auto"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Staff Member
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Staff Table */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Staff Details</h3>
-            <span className="text-sm text-gray-500">
-              {staff.length} staff member{staff.length !== 1 ? 's' : ''}
-            </span>
-          </div>
-          
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600"></div>
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Staff Details
+              </CardTitle>
+              <Badge variant="secondary">
+                {staff.length} staff member{staff.length !== 1 ? 's' : ''}
+              </Badge>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {staff.length > 0 ? (
-                    staff.map((s) => (
-                      <tr key={s._id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-medium text-gray-900">{s.name}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            s.role === 'Manager' ? 'bg-blue-100 text-blue-800' :
-                            s.role === 'Chef' ? 'bg-purple-100 text-purple-800' :
-                            s.role === 'Owner' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {s.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">{s.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">{s.phone || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            s.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {s.status || 'Active'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button 
-                            onClick={() => openEditModal(s)}
-                            className="text-orange-600 hover:text-orange-900 mr-4"
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            onClick={() => deleteStaff(s._id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            Remove
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                        No staff members found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600"></div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {staff.length > 0 ? (
+                      staff.map((s) => (
+                        <TableRow key={s._id}>
+                          <TableCell className="font-medium">{s.name}</TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              s.role === 'Manager' ? 'default' :
+                              s.role === 'Chef' ? 'secondary' :
+                              s.role === 'Owner' ? 'destructive' :
+                              'outline'
+                            }>
+                              {s.role}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{s.email}</TableCell>
+                          <TableCell>{s.phone || 'N/A'}</TableCell>
+                          <TableCell>
+                            <Badge variant={s.status === 'Active' ? 'default' : 'secondary'}>
+                              {s.status || 'Active'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => openEditModal(s)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => deleteStaff(s._id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center text-gray-500 py-8">
+                          No staff members found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Edit Staff Modal */}
-      {isEditing && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-gray-800">Edit Staff Member</h3>
-              <button 
-                onClick={() => setIsEditing(false)} 
-                className="text-gray-500 hover:text-gray-700"
-              >
-                &times;
-              </button>
-            </div>
+        {/* Edit Staff Modal */}
+        <Dialog open={isEditing} onOpenChange={setIsEditing}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit Staff Member</DialogTitle>
+            </DialogHeader>
             
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input 
-                  type="text" 
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Name</Label>
+                <Input 
+                  id="edit-name"
                   value={editStaff.name} 
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input 
-                  type="email" 
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input 
+                  id="edit-email"
                   value={editStaff.email} 
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                <select 
-                  name="role" 
+              <div className="space-y-2">
+                <Label htmlFor="edit-role">Role</Label>
+                <Select 
                   value={editStaff.role} 
-                  onChange={(e) => handleInputChange(e, 'edit')} 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  onValueChange={(value) => setEditStaff({...editStaff, role: value})}
                 >
-                  <option value="Waiter">Waiter</option>
-                  <option value="Chef">Chef</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Owner">Owner</option>
-                </select>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Waiter">Waiter</SelectItem>
+                    <SelectItem value="Chef">Chef</SelectItem>
+                    <SelectItem value="Manager">Manager</SelectItem>
+                    <SelectItem value="Owner">Owner</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Password (Optional)</label>
-                <input 
-                  type="password" 
+              <div className="space-y-2">
+                <Label htmlFor="edit-password">New Password (Optional)</Label>
+                <Input 
+                  id="edit-password"
                   name="password"
+                  type="password"
                   placeholder="Leave blank to keep current"
                   value={editStaff.password} 
                   onChange={(e) => handleInputChange(e, 'edit')} 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
               </div>
               
               <div className="flex justify-end space-x-3 pt-4">
-                <button 
+                <Button 
+                  variant="outline"
                   onClick={() => setIsEditing(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                 >
                   Cancel
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={updateStaff}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
                 >
                   Save Changes
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </AppLayout>
   );
 };
