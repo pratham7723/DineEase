@@ -27,7 +27,9 @@ const allowedOrigins = [
   'https://flavorfusion-1yaw2py3c-pratham7723s-projects.vercel.app',
   'https://flavorfusion-hge3u8md1-pratham7723s-projects.vercel.app',
   'https://flavorfusion-m8y40xqqh-pratham7723s-projects.vercel.app',
-  'https://flavorfusion-one.vercel.app'
+  'https://flavorfusion-one.vercel.app',
+  // Add wildcard for all Vercel deployments
+  /^https:\/\/flavorfusion.*\.vercel\.app$/
 ];
 
 app.use(cors({ 
