@@ -24,9 +24,8 @@ const LOCAL_MODELS = {
   "Veg Sandwich": "/models/sandwich.glb",
   "Croissant": "/models/crossaint.glb",
   "Garlic Bread": "/models/garlicbread.glb",
-  "Donut": "models/donut.glb",
+  "Donut": "/models/donut.glb",
   "Coca Cola": "/models/coke.glb",
-  "Cake": "/models/cake.glb",
   "Red Velvet Pastry": "/models/redvelvet.glb",
   "cappuccino": "/models/coffee_cup.glb",
   "Cold Coffee": "/models/creamed_coffee.glb",
@@ -36,7 +35,6 @@ const LOCAL_MODELS = {
   "Red Pepperoni Pizza": "/models/red peprika.glb",
   "Chicken Momos": "/models/momo_food.glb",
   "Veg Momos": "/models/momo_food.glb",
-
 };
 
 const CustomerMenu = () => {
@@ -374,7 +372,11 @@ const CustomerMenu = () => {
 
                 {(item.arModel || LOCAL_MODELS[item.name]) && (
                   <Button
-                    onClick={() => setArModelUrl(item.arModel ? `/models/${item.arModel}` : LOCAL_MODELS[item.name])}
+                    onClick={() => {
+                      const modelPath = item.arModel ? `/models/${item.arModel}` : LOCAL_MODELS[item.name];
+                      console.log('AR Model for', item.name, ':', modelPath);
+                      setArModelUrl(modelPath);
+                    }}
                     variant="outline"
                     className="w-full gap-2"
                     size="sm"
