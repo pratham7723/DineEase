@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const KitchenStaff = () => {
   const [orders, setOrders] = useState([]);
@@ -6,10 +7,21 @@ const KitchenStaff = () => {
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { token } = useAuth();
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/v1/orders");
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders`, {
+        headers
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -48,11 +60,17 @@ const KitchenStaff = () => {
       // Normalize status to lowercase before sending
       const normalizedStatus = newStatus.toLowerCase();
       
-      const response = await fetch(`http://localhost:8000/api/v1/orders/${orderId}`, {
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders/${orderId}`, {
         method: "PATCH",
-        headers: { 
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({ status: normalizedStatus })
       });
   
