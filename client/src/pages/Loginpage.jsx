@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiLock } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,11 @@ const LoginPage = () => {
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  // Get the intended destination or default to dashboard
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -50,20 +56,19 @@ const LoginPage = () => {
         );
       }
 
-      // Store token and user data
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      // Store token and user data using AuthContext
+      login(data.user, data.token);
 
-      // Redirect based on role
-      const redirectPath =
-        {
-          owner: "/dashboard",
-          manager: "/dashboard",
-          chef: "/kitchenstaff",
-          waiter: "/waiter",
-        }[data.user.role.toLowerCase()] || "/";
-
-      navigate(redirectPath);
+      // Redirect based on role or intended destination
+      const roleRedirects = {
+        Owner: "/dashboard",
+        Manager: "/dashboard",
+        Chef: "/kitchenstaff",
+        Waiter: "/waiter",
+      };
+      
+      const redirectPath = roleRedirects[data.user.role] || from;
+      navigate(redirectPath, { replace: true });
     } catch (error) {
       setLoginError(error.message);
     } finally {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
   Utensils, 
@@ -11,6 +11,7 @@ import {
   LogOut,
   ChefHat
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 import {
   Sidebar,
@@ -28,16 +29,31 @@ import {
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout, hasAnyRole } = useAuth();
 
-  const navigationItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { path: '/orders', label: 'Orders', icon: Utensils },
-    { path: '/Management', label: 'Table Manager', icon: Table },
-    { path: '/menu', label: 'Menu', icon: MenuIcon },
-    { path: '/Tableqrcodes', label: 'Table QR Codes', icon: QrCode },
-    { path: '/staff', label: 'Staff', icon: Users },
-    { path: '/reports', label: 'Reports', icon: TrendingUp },
-  ];
+  // Define navigation items based on user role
+  const getNavigationItems = () => {
+    const allItems = [
+      { path: '/dashboard', label: 'Dashboard', icon: BarChart3, roles: ['Owner', 'Manager'] },
+      { path: '/orders', label: 'Orders', icon: Utensils, roles: ['Owner', 'Manager', 'Waiter'] },
+      { path: '/Management', label: 'Table Manager', icon: Table, roles: ['Owner', 'Manager', 'Waiter'] },
+      { path: '/menu', label: 'Menu', icon: MenuIcon, roles: ['Owner', 'Manager'] },
+      { path: '/Tableqrcodes', label: 'Table QR Codes', icon: QrCode, roles: ['Owner', 'Manager'] },
+      { path: '/Staff', label: 'Staff', icon: Users, roles: ['Owner', 'Manager'] },
+      { path: '/Reports', label: 'Reports', icon: TrendingUp, roles: ['Owner', 'Manager'] },
+    ];
+
+    // Filter items based on user role
+    return allItems.filter(item => hasAnyRole(item.roles));
+  };
+
+  const navigationItems = getNavigationItems();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/loginpage');
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -49,6 +65,14 @@ const AppSidebar = () => {
             <span className="truncate text-xs text-muted-foreground">Restaurant Management</span>
           </div>
         </div>
+        {user && (
+          <div className="px-2 py-1 border-t">
+            <div className="text-xs text-muted-foreground">
+              <div className="font-medium">{user.name}</div>
+              <div className="capitalize">{user.role}</div>
+            </div>
+          </div>
+        )}
       </SidebarHeader>
       
       <SidebarContent>
@@ -81,10 +105,7 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton 
               variant="destructive"
-              onClick={() => {
-                // Add logout logic here
-                console.log('Logout clicked');
-              }}
+              onClick={handleLogout}
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
