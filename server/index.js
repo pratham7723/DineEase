@@ -17,23 +17,9 @@ import authRouter from "./routes/auth.routes.js";
 
 const app = express();
 
-// Middleware
-const allowedOrigins = [
-  CLIENT_URL,
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'https://flavorfusion-2dr4afkh3-pratham7723s-projects.vercel.app',
-  'https://flavorfusion-rkrln3szt-pratham7723s-projects.vercel.app',
-  'https://flavorfusion-1yaw2py3c-pratham7723s-projects.vercel.app',
-  'https://flavorfusion-hge3u8md1-pratham7723s-projects.vercel.app',
-  'https://flavorfusion-m8y40xqqh-pratham7723s-projects.vercel.app',
-  'https://flavorfusion-one.vercel.app',
-  // Add wildcard for all Vercel deployments
-  /^https:\/\/flavorfusion.*\.vercel\.app$/
-];
-
+// Middleware - Temporary permissive CORS for debugging
 app.use(cors({ 
-  origin: allowedOrigins, 
+  origin: true, // Allow all origins temporarily
   credentials: true 
 }));
 app.use(express.json());
