@@ -15,7 +15,6 @@ import {
   CustomerMenu,
   KitchenStaff,
   Waiter,
-  Management,
   Loginpage,
 } from './pages'
 
@@ -79,14 +78,6 @@ function App() {
             </ProtectedRoute>
           } />
           
-          <Route path="/management" element={
-            <ProtectedRoute>
-              <RoleBasedRoute allowedRoles={['Owner', 'Manager', 'Waiter']}>
-                <Management />
-              </RoleBasedRoute>
-            </ProtectedRoute>
-          } />
-          
           <Route path="/kitchenstaff" element={
             <ProtectedRoute>
               <RoleBasedRoute allowedRoles={['Owner', 'Manager', 'Chef']}>
@@ -97,7 +88,7 @@ function App() {
           
           <Route path="/waiter" element={
             <ProtectedRoute>
-              <RoleBasedRoute allowedRoles={['Owner', 'Manager', 'Waiter']}>
+              <RoleBasedRoute allowedRoles={['Waiter']}>
                 <Waiter />
               </RoleBasedRoute>
             </ProtectedRoute>

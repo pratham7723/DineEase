@@ -3,13 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
   Utensils, 
-  Table, 
   Menu as MenuIcon, 
   QrCode, 
   Users, 
   TrendingUp, 
   LogOut,
-  ChefHat
+  ChefHat,
+  ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -36,8 +36,8 @@ const AppSidebar = () => {
   const getNavigationItems = () => {
     const allItems = [
       { path: '/dashboard', label: 'Dashboard', icon: BarChart3, roles: ['Owner', 'Manager'] },
+      { path: '/waiter', label: 'Waiter Dashboard', icon: ClipboardList, roles: ['Waiter'] },
       { path: '/orders', label: 'Orders', icon: Utensils, roles: ['Owner', 'Manager', 'Waiter'] },
-      { path: '/Management', label: 'Table Manager', icon: Table, roles: ['Owner', 'Manager', 'Waiter'] },
       { path: '/menu', label: 'Menu', icon: MenuIcon, roles: ['Owner', 'Manager'] },
       { path: '/Tableqrcodes', label: 'Table QR Codes', icon: QrCode, roles: ['Owner', 'Manager'] },
       { path: '/Staff', label: 'Staff', icon: Users, roles: ['Owner', 'Manager'] },

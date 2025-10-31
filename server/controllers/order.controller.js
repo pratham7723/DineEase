@@ -166,6 +166,114 @@ export const getOrders = async (req, res) => {
 };
 
 /**
+ * @desc    Get a single order by ID
+ * @route   GET /api/v1/orders/:orderId
+ * @access  Public
+ * @param   {Object} req - Request object
+ * @param   {Object} res - Response object
+ * @returns {Object} JSON response with order details or error message
+ */
+export const getOrderById = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    
+    // Try to find by orderId first (numeric), then by _id
+    let order = await Order.findOne({ orderId: parseInt(orderId) });
+    if (!order) {
+      order = await Order.findById(orderId);
+    }
+    
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("❌ Error fetching order:", error);
+    res.status(500).json({
+      success: false,
+      message: "❌ Internal server error while fetching order",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * @desc    Update order (items, total, etc.)
+ * @route   PUT /api/v1/orders/:orderId
+ * @access  Public
+ * @param   {Object} req - Request object
+ * @param   {Object} res - Response object
+ * @returns {Object} JSON response with updated order or error message
+ */
+export const updateOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { items, total, customerName, phoneNumber } = req.body;
+
+    // Find order by orderId or _id
+    let order = await Order.findOne({ orderId: parseInt(orderId) });
+    if (!order) {
+      order = await Order.findById(orderId);
+    }
+    
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    // Update order fields
+    if (items && Array.isArray(items)) {
+      order.items = items;
+    }
+    if (total !== undefined) {
+      order.total = total;
+    }
+    if (customerName) {
+      order.customerName = customerName;
+    }
+    if (phoneNumber) {
+      order.phoneNumber = phoneNumber;
+    }
+
+    await order.save();
+
+    // Update table menu items if items changed
+    if (items && Array.isArray(items)) {
+      await Table.findOneAndUpdate(
+        { tableNo: order.tableNumber },
+        {
+          $set: {
+            menuItems: items.map(item => ({
+              menuItem: item._id || item.menuItemId,
+              quantity: item.quantity
+            }))
+          }
+        }
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order updated successfully",
+      data: order
+    });
+  } catch (error) {
+    console.error("❌ Error updating order:", error);
+    res.status(500).json({
+      success: false,
+      message: "❌ Internal server error while updating order",
+      error: error.message,
+    });
+  }
+};
+
+/**
  * @desc    Update order status with validation
  * @route   PATCH /api/v1/orders/:orderId
  * @access  Public

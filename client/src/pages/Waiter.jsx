@@ -1,37 +1,51 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppLayout from '../components/AppLayout';
-import axios from 'axios';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Utensils, Plus, X } from 'lucide-react';
 
 const Waiter = () => {
+  const navigate = useNavigate();
+  const [activeOrders, setActiveOrders] = useState([]);
   const [tables, setTables] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
-  const [newOrder, setNewOrder] = useState({
-    tableNumber: '',
-    customerName: '',
-    phoneNumber: '',
-    items: [],
-    selectedItem: '',
-    selectedQuantity: 1
-  });
-  const [showOrderForm, setShowOrderForm] = useState(false);
-  const [selectedTable, setSelectedTable] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [existingOrder, setExistingOrder] = useState(null);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [tableOrder, setTableOrder] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState('');
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [tablesRes, menuRes] = await Promise.all([
+        const [ordersRes, tablesRes, menuRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders`),
           fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/tables`),
           fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/menus`)
         ]);
         
+        const ordersData = await ordersRes.json();
         const tablesData = await tablesRes.json();
         const menuData = await menuRes.json();
         
-        setTables(tablesData.data || tablesData);
-        setMenuItems(menuData.data || menuData);
+        // Filter active orders (pending or preparing)
+        const orders = Array.isArray(ordersData) ? ordersData : (ordersData.data || []);
+        const active = orders.filter(order => 
+          ['pending', 'preparing'].includes(order.status?.toLowerCase())
+        );
+        setActiveOrders(active);
+        
+        // Set tables and menu items
+        setTables(Array.isArray(tablesData) ? tablesData : (tablesData.data || tablesData));
+        setMenuItems(Array.isArray(menuData) ? menuData : (menuData.data || menuData));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -39,205 +53,187 @@ const Waiter = () => {
       }
     };
     fetchData();
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleTableSelect = async (table) => {
+
+  const formatItems = (items) => {
+    if (!items || !Array.isArray(items)) return "No items";
+    return items.map(item => 
+      `${item.quantity || 1}x ${item.name || 'Unnamed Item'}`
+    ).join(', ');
+  };
+
+  const getStatusBadge = (status) => {
+    const normalizedStatus = status?.toLowerCase() || 'unknown';
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      preparing: 'bg-blue-100 text-blue-800',
+      completed: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800'
+    };
+    return colors[normalizedStatus] || 'bg-gray-100 text-gray-800';
+  };
+
+  const handleTableClick = async (table) => {
     setSelectedTable(table);
     
-    // Check if table already has an order
-    if (table.currentOrder) {
+    // Find active orders for this table
+    const tableOrders = activeOrders.filter(order => 
+      order.tableNumber === table.tableNo
+    );
+    
+    // If there's an active order, fetch its details
+    if (tableOrders.length > 0) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders/${table.currentOrder}`);
-        const existingOrderData = await response.json();
-        setExistingOrder(existingOrderData);
-        setNewOrder(prev => ({
-          ...prev,
-          tableNumber: table.tableNo,
-          customerName: existingOrderData.customerName,
-          phoneNumber: existingOrderData.phoneNumber,
-          items: existingOrderData.items || []
-        }));
+        const orderId = tableOrders[0].orderId || tableOrders[0]._id;
+        const response = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders/${orderId}`);
+        const orderData = await response.json();
+        setTableOrder(orderData);
       } catch (error) {
-        console.error('Error fetching existing order:', error);
+        console.error('Error fetching order details:', error);
+        setTableOrder(tableOrders[0]); // Use the order from active orders
       }
     } else {
-      setNewOrder(prev => ({
-        ...prev,
-        tableNumber: table.tableNo,
-        customerName: '',
-        phoneNumber: '',
-        items: []
-      }));
+      setTableOrder(null);
     }
     
-    setShowOrderForm(true);
+    setIsDialogOpen(true);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewOrder(prev => ({ ...prev, [name]: value }));
-  };
+  const addItemToOrder = async () => {
+    if (!selectedMenuItem || !tableOrder) return;
 
-  const handleQuantityChange = (e) => {
-    const value = Math.max(1, parseInt(e.target.value) || 1);
-    setNewOrder(prev => ({ ...prev, selectedQuantity: value }));
-  };
-
-  const addItemToOrder = () => {
-    const selectedItem = menuItems.find(item => item._id === newOrder.selectedItem);
-    if (!selectedItem) return;
-
-    // Check if item already exists in order
-    const existingItemIndex = newOrder.items.findIndex(item => item._id === selectedItem._id);
-    
-    if (existingItemIndex >= 0) {
-      // Update quantity if item already exists
-      const updatedItems = [...newOrder.items];
-      updatedItems[existingItemIndex] = {
-        ...updatedItems[existingItemIndex],
-        quantity: updatedItems[existingItemIndex].quantity + newOrder.selectedQuantity
-      };
-      setNewOrder(prev => ({
-        ...prev,
-        items: updatedItems,
-        selectedItem: '',
-        selectedQuantity: 1
-      }));
-    } else {
-      // Add new item
-      setNewOrder(prev => ({
-        ...prev,
-        items: [...prev.items, {
-          _id: selectedItem._id,
-          name: selectedItem.name,
-          price: selectedItem.price,
-          quantity: prev.selectedQuantity
-        }],
-        selectedItem: '',
-        selectedQuantity: 1
-      }));
-    }
-  };
-
-  const removeItem = (index) => {
-    setNewOrder(prev => ({
-      ...prev,
-      items: prev.items.filter((_, i) => i !== index)
-    }));
-  };
-
-  const updateItemQuantity = (index, newQuantity) => {
-    if (newQuantity < 1) return;
-    
-    const updatedItems = [...newOrder.items];
-    updatedItems[index] = {
-      ...updatedItems[index],
-      quantity: newQuantity
-    };
-    
-    setNewOrder(prev => ({
-      ...prev,
-      items: updatedItems
-    }));
-  };
-
-  const submitOrder = async () => {
-    if (!newOrder.tableNumber || !newOrder.customerName || !newOrder.phoneNumber || newOrder.items.length === 0) {
-      alert('Please fill all required fields');
-      return;
-    }
+    const menuItem = menuItems.find(item => item._id === selectedMenuItem);
+    if (!menuItem) return;
 
     try {
       setLoading(true);
       
-      const orderData = {
-        customerName: newOrder.customerName,
-        phoneNumber: newOrder.phoneNumber,
-        tableNumber: parseInt(newOrder.tableNumber),
-        items: newOrder.items,
-        total: newOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-      };
+      // Prepare updated items array
+      const existingItemIndex = tableOrder.items.findIndex(
+        item => item._id === menuItem._id
+      );
 
-      const url = existingOrder 
-        ? `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders/${existingOrder._id}`
-        : `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders?table=${newOrder.tableNumber}`;
-
-      const method = existingOrder ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create/update order');
+      let updatedItems;
+      if (existingItemIndex >= 0) {
+        // Update quantity if item exists
+        updatedItems = [...tableOrder.items];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: (updatedItems[existingItemIndex].quantity || 1) + selectedQuantity
+        };
+      } else {
+        // Add new item
+        updatedItems = [
+          ...tableOrder.items,
+          {
+            _id: menuItem._id,
+            name: menuItem.name,
+            price: menuItem.price,
+            quantity: selectedQuantity
+          }
+        ];
       }
 
-      const resultOrder = await response.json();
+      // Calculate new total
+      const newTotal = updatedItems.reduce(
+        (sum, item) => sum + (item.price * (item.quantity || 1)),
+        0
+      );
 
-      // Update table status locally
-      setTables(prev => prev.map(table => 
-        table.tableNo === parseInt(newOrder.tableNumber)
-          ? { ...table, status: 'Booked', currentOrder: resultOrder._id }
-          : table
-      ));
+      const orderId = tableOrder.orderId || tableOrder._id;
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders/${orderId}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...tableOrder,
+            items: updatedItems,
+            total: newTotal
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to update order');
+      }
+
+      const result = await response.json();
+      // Handle both direct order response and wrapped response
+      const updatedOrder = result.data || result;
+      setTableOrder(updatedOrder);
+      
+      // Refresh active orders
+      const ordersRes = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders`);
+      const ordersData = await ordersRes.json();
+      const orders = Array.isArray(ordersData) ? ordersData : (ordersData.data || []);
+      const active = orders.filter(order => 
+        ['pending', 'preparing'].includes(order.status?.toLowerCase())
+      );
+      setActiveOrders(active);
 
       // Reset form
-      setNewOrder({
-        tableNumber: '',
-        customerName: '',
-        phoneNumber: '',
-        items: [],
-        selectedItem: '',
-        selectedQuantity: 1
-      });
-      setExistingOrder(null);
-      setShowOrderForm(false);
-      alert(`Order ${existingOrder ? 'updated' : 'placed'} successfully!`);
-
+      setSelectedMenuItem('');
+      setSelectedQuantity(1);
+      alert('Item added to order successfully!');
     } catch (error) {
-      console.error('Error submitting order:', error);
-      alert(`Error: ${error.message}`);
+      console.error('Error adding item to order:', error);
+      alert(`Failed to add item to order: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const releaseTable = async (tableId) => {
+  const removeItemFromOrder = async (itemIndex) => {
+    if (!tableOrder) return;
+
     try {
       setLoading(true);
+      const updatedItems = tableOrder.items.filter((_, index) => index !== itemIndex);
       
-      const response = await axios.patch(
-        `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/tables/${tableId}/release`,
-        {}, // Empty body since it's a PATCH request
+      const orderId = tableOrder.orderId || tableOrder._id;
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders/${orderId}`,
         {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          timeout: 5000 // 5-second timeout
+          body: JSON.stringify({
+            ...tableOrder,
+            items: updatedItems,
+            total: updatedItems.reduce(
+              (sum, item) => sum + (item.price * (item.quantity || 1)),
+              0
+            )
+          })
         }
       );
-  
-      console.log('Release response:', response.data);
-      
-      // Update state as before...
-      
-    } catch (error) {
-      if (error.code === 'ECONNABORTED') {
-        console.error('Request timeout:', error);
-        alert('Server is not responding. Please try again.');
-      } else if (error.response) {
-        // Server responded with error status (4xx/5xx)
-        console.error('Server error:', error.response.data);
-        alert(`Error: ${error.response.data.message}`);
-      } else if (error.request) {
-        // No response received
-        console.error('No response:', error.request);
-        alert('Cannot connect to server. Check your network.');
-      } else {
-        console.error('Unknown error:', error.message);
-        alert('An unexpected error occurred');
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to remove item');
       }
+
+      const result = await response.json();
+      // Handle both direct order response and wrapped response
+      const updatedOrder = result.data || result;
+      setTableOrder(updatedOrder);
+      
+      // Refresh active orders
+      const ordersRes = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders`);
+      const ordersData = await ordersRes.json();
+      const orders = Array.isArray(ordersData) ? ordersData : (ordersData.data || []);
+      const active = orders.filter(order => 
+        ['pending', 'preparing'].includes(order.status?.toLowerCase())
+      );
+      setActiveOrders(active);
+    } catch (error) {
+      console.error('Error removing item:', error);
+      alert('Failed to remove item');
     } finally {
       setLoading(false);
     }
@@ -247,165 +243,276 @@ const Waiter = () => {
     <AppLayout>
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800">Waiter Dashboard</h2>
+          <Button 
+            onClick={() => navigate('/orders')}
+            className="gap-2"
+          >
+            <Utensils className="h-4 w-4" />
+            View All Orders
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-          {tables.map((table) => (
-            <div 
-              key={table._id} 
-              className={`p-4 rounded-lg shadow-sm cursor-pointer transition-all ${
-                table.status === 'Available' 
-                  ? 'bg-green-100 hover:bg-green-200' 
-                  : 'bg-red-100 hover:bg-red-200'
-              }`}
-              onClick={() => handleTableSelect(table)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-lg font-semibold">Table {table.tableNo}</p>
-                  <p className="text-sm">
-                    Status: <span className="font-medium">{table.status}</span>
-                  </p>
-                  <p className="text-sm">Capacity: {table.capacity}</p>
-                </div>
-                {table.status !== 'Available' && (
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      releaseTable(table._id);
-                    }}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    Release
-                  </button>
-                )}
-              </div>
+        {/* Active Orders Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>Active Orders</CardTitle>
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/orders')}
+                className="gap-2"
+              >
+                <Utensils className="h-4 w-4" />
+                View All Orders
+              </Button>
             </div>
-          ))}
-        </div>
-
-        {showOrderForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-              <h3 className="text-xl font-bold mb-4">
-                {existingOrder ? 'Add to Existing Order' : 'New Order'} for Table {selectedTable?.tableNo}
-              </h3>
-              
-              <div className="space-y-4">
-                {!existingOrder && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Customer Name*</label>
-                      <input
-                        type="text"
-                        name="customerName"
-                        value={newOrder.customerName}
-                        onChange={handleInputChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Phone Number*</label>
-                      <input
-                        type="tel"
-                        name="phoneNumber"
-                        value={newOrder.phoneNumber}
-                        onChange={handleInputChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                        required
-                      />
-                    </div>
-                  </>
-                )}
-
-                <div className="border-t pt-4">
-                  <h4 className="font-medium mb-2">Order Items*</h4>
-                  
-                  <div className="flex space-x-2 mb-2">
-                    <select
-                      value={newOrder.selectedItem || ''}
-                      onChange={(e) => setNewOrder(prev => ({ ...prev, selectedItem: e.target.value }))}
-                      className="flex-1 border border-gray-300 rounded-md p-2"
-                    >
-                      <option value="">Select menu item</option>
-                      {menuItems.map(item => (
-                        <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.price})
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      min="1"
-                      value={newOrder.selectedQuantity}
-                      onChange={handleQuantityChange}
-                      className="w-16 border border-gray-300 rounded-md p-2"
-                    />
-                    <button 
-                      onClick={addItemToOrder}
-                      className="bg-blue-600 text-white px-3 rounded-md hover:bg-blue-700"
-                    >
-                      Add
-                    </button>
-                  </div>
-
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {newOrder.items.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                        <div className="flex items-center space-x-2">
-                          <span>{item.name} (₹{item.price})</span>
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) => updateItemQuantity(index, parseInt(e.target.value))}
-                            className="w-12 border border-gray-300 rounded-md p-1 text-center"
-                          />
-                          <span>= ₹{item.price * item.quantity}</span>
+          </CardHeader>
+          <CardContent>
+            {loading && activeOrders.length === 0 ? (
+              <p className="text-gray-500">Loading orders...</p>
+            ) : activeOrders.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500 mb-4">No active orders at the moment.</p>
+                <Button 
+                  onClick={() => navigate('/orders')}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Utensils className="h-4 w-4" />
+                  Go to Orders Page
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {activeOrders.map((order) => {
+                  const orderId = order.orderId || order._id;
+                  return (
+                    <div key={orderId} className="border rounded-lg p-4 bg-gray-50 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-semibold">Order #{orderId}</p>
+                          <p className="text-sm text-gray-600">Table {order.tableNumber}</p>
                         </div>
-                        <button 
-                          onClick={() => removeItem(index)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          &times;
-                        </button>
+                        <Badge className={getStatusBadge(order.status)}>
+                          {order.status}
+                        </Badge>
                       </div>
-                    ))}
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-700">
+                          <span className="font-medium">Customer:</span> {order.customerName || 'Unknown'}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {formatItems(order.items)}
+                        </p>
+                        <p className="text-sm font-medium mt-2">
+                          Total: ₹{typeof order.total === 'number' ? order.total.toFixed(2) : 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Tables Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tables</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading && tables.length === 0 ? (
+              <p className="text-gray-500">Loading tables...</p>
+            ) : tables.length === 0 ? (
+              <p className="text-gray-500">No tables available.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {tables.map((table) => {
+                  const tableActiveOrder = activeOrders.find(
+                    order => order.tableNumber === table.tableNo
+                  );
+                  
+                  return (
+                    <div
+                      key={table._id}
+                      onClick={() => handleTableClick(table)}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        table.status === 'Available'
+                          ? 'border-green-200 bg-green-50 hover:border-green-300'
+                          : 'border-red-200 bg-red-50 hover:border-red-300'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="text-lg font-semibold">Table {table.tableNo}</p>
+                          <p className="text-sm text-gray-600">Capacity: {table.capacity}</p>
+                        </div>
+                        <Badge className={
+                          table.status === 'Available'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }>
+                          {table.status}
+                        </Badge>
+                      </div>
+                      {tableActiveOrder && (
+                        <div className="mt-2 pt-2 border-t">
+                          <p className="text-xs text-gray-600">
+                            Active Order #{tableActiveOrder.orderId || tableActiveOrder._id}
+                          </p>
+                          <p className="text-xs font-medium">
+                            ₹{typeof tableActiveOrder.total === 'number' ? tableActiveOrder.total.toFixed(2) : 'N/A'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Table Order Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                Table {selectedTable?.tableNo} - Order Details
+              </DialogTitle>
+              <DialogDescription>
+                {tableOrder ? 'View and manage active order for this table' : 'No active order for this table'}
+              </DialogDescription>
+            </DialogHeader>
+
+            {tableOrder ? (
+              <div className="space-y-4">
+                {/* Customer Info */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Customer Information</h4>
+                  <p className="text-sm">
+                    <span className="font-medium">Name:</span> {tableOrder.customerName || 'Unknown'}
+                  </p>
+                  <p className="text-sm">
+                    <span className="font-medium">Phone:</span> {tableOrder.phoneNumber || 'N/A'}
+                  </p>
+                  <div className="mt-2">
+                    <Badge className={getStatusBadge(tableOrder.status)}>
+                      {tableOrder.status}
+                    </Badge>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t">
-                  <p className="text-right font-medium">
-                    Total: ₹{newOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)}
-                  </p>
+                {/* Current Order Items */}
+                <div>
+                  <h4 className="font-semibold mb-2">Current Order Items</h4>
+                  {tableOrder.items && tableOrder.items.length > 0 ? (
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-xs font-medium">Item</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium">Qty</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium">Price</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium">Total</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y">
+                          {tableOrder.items.map((item, index) => (
+                            <tr key={index}>
+                              <td className="px-4 py-2">{item.name}</td>
+                              <td className="px-4 py-2">{item.quantity || 1}</td>
+                              <td className="px-4 py-2">₹{item.price?.toFixed(2) || '0.00'}</td>
+                              <td className="px-4 py-2">
+                                ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                              </td>
+                              <td className="px-4 py-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeItemFromOrder(index)}
+                                  className="text-red-600 hover:text-red-800"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="bg-gray-50">
+                          <tr>
+                            <td colSpan="3" className="px-4 py-2 font-semibold text-right">
+                              Total:
+                            </td>
+                            <td className="px-4 py-2 font-semibold">
+                              ₹{typeof tableOrder.total === 'number' ? tableOrder.total.toFixed(2) : '0.00'}
+                            </td>
+                            <td></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm">No items in this order</p>
+                  )}
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    onClick={() => {
-                      setShowOrderForm(false);
-                      setExistingOrder(null);
-                    }}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={submitOrder}
-                    disabled={loading}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400"
-                  >
-                    {loading 
-                      ? existingOrder ? 'Updating...' : 'Submitting...' 
-                      : existingOrder ? 'Update Order' : 'Submit Order'}
-                  </button>
+                {/* Add Items Section */}
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-3">Add Items to Order</h4>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="menu-item">Select Menu Item</Label>
+                      <Select
+                        value={selectedMenuItem}
+                        onValueChange={setSelectedMenuItem}
+                      >
+                        <SelectTrigger id="menu-item">
+                          <SelectValue placeholder="Select an item" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {menuItems.map((item) => (
+                            <SelectItem key={item._id} value={item._id}>
+                              {item.name} - ₹{item.price?.toFixed(2) || '0.00'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-24">
+                      <Label htmlFor="quantity">Quantity</Label>
+                      <Input
+                        id="quantity"
+                        type="number"
+                        min="1"
+                        value={selectedQuantity}
+                        onChange={(e) => setSelectedQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <Button
+                        onClick={addItemToOrder}
+                        disabled={!selectedMenuItem || loading}
+                        className="gap-2"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500 mb-4">No active order for Table {selectedTable?.tableNo}</p>
+                <p className="text-sm text-gray-400">Create a new order from the Orders page</p>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
     </AppLayout>
   );
 };

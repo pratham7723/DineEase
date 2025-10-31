@@ -3,6 +3,8 @@ import Order from "../models/order.model.js"; // Make sure to import your Order 
 import { 
   placeOrder, 
   getOrders, 
+  getOrderById,
+  updateOrder,
   updateOrderStatus, 
   cancelOrder 
 } from "../controllers/order.controller.js";
@@ -15,13 +17,7 @@ router.post("/", placeOrder);
 // Get all orders
 router.get("/", getOrders);
 
-// Update order status
-router.patch("/:orderId", updateOrderStatus);
-
-// Cancel order
-router.delete("/:orderId", cancelOrder);
-
-// GET /api/v1/orders/stats
+// GET /api/v1/orders/stats (must be before /:orderId route)
 router.get('/stats', async (req, res) => {
   try {
     // 1. Get raw counts first
@@ -98,6 +94,18 @@ router.get('/stats', async (req, res) => {
     });
   }
 });
+
+// Get a single order by ID (must be after /stats route)
+router.get("/:orderId", getOrderById);
+
+// Update order (items, total, etc.)
+router.put("/:orderId", updateOrder);
+
+// Update order status
+router.patch("/:orderId", updateOrderStatus);
+
+// Cancel order
+router.delete("/:orderId", cancelOrder);
 
 // Add this temporary route to your orderRoutes.js
 router.get('/debug', async (req, res) => {
