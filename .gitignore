@@ -18,14 +18,6 @@ out/
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.*.local
-
 # Runtime data
 pids
 *.pid
@@ -82,9 +74,6 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
-
-# dotenv environment variables file
-.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -143,6 +132,7 @@ pnpm-lock.yaml
 
 # Local development
 *.local
+!.env*.local
 
 # Testing
 coverage/
