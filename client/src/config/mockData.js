@@ -130,16 +130,21 @@ export const MOCK_ORDERS = [
   }
 ];
 
-// Mock Tables Data
+// Mock Tables Data (matching real database schema)
 export const MOCK_TABLES = [
-  { _id: "mock_table_1", tableNumber: 1, capacity: 4, status: "available", qrCode: "DEMO_QR_001" },
-  { _id: "mock_table_2", tableNumber: 2, capacity: 2, status: "occupied", qrCode: "DEMO_QR_002" },
-  { _id: "mock_table_3", tableNumber: 3, capacity: 6, status: "available", qrCode: "DEMO_QR_003" },
-  { _id: "mock_table_4", tableNumber: 4, capacity: 4, status: "available", qrCode: "DEMO_QR_004" },
-  { _id: "mock_table_5", tableNumber: 5, capacity: 4, status: "occupied", qrCode: "DEMO_QR_005" },
-  { _id: "mock_table_6", tableNumber: 6, capacity: 8, status: "available", qrCode: "DEMO_QR_006" },
-  { _id: "mock_table_7", tableNumber: 7, capacity: 2, status: "occupied", qrCode: "DEMO_QR_007" },
-  { _id: "mock_table_8", tableNumber: 8, capacity: 4, status: "available", qrCode: "DEMO_QR_008" }
+  { _id: "mock_table_1", tableNo: 1, capacity: 4, status: "Available", menuItems: [], currentOrder: null },
+  { _id: "mock_table_2", tableNo: 2, capacity: 2, status: "Booked", menuItems: [
+    { menuItem: "67e13ecb7a371bfb754d57d2", quantity: 2 },
+    { menuItem: "67e141177a371bfb754d5804", quantity: 1 }
+  ], currentOrder: "67dda1124694c47c712d39a7", customerName: "John Doe", customerPhone: "9876543210" },
+  { _id: "mock_table_3", tableNo: 3, capacity: 6, status: "Available", menuItems: [], currentOrder: null },
+  { _id: "mock_table_4", tableNo: 4, capacity: 4, status: "Available", menuItems: [], currentOrder: null },
+  { _id: "mock_table_5", tableNo: 5, capacity: 4, status: "Booked", menuItems: [
+    { menuItem: "67e1420e7a371bfb754d5808", quantity: 1 }
+  ], currentOrder: "67dda1124694c47c712d39b8", customerName: "Jane Smith", customerPhone: "9876543211" },
+  { _id: "mock_table_6", tableNo: 6, capacity: 8, status: "Available", menuItems: [], currentOrder: null },
+  { _id: "mock_table_7", tableNo: 7, capacity: 2, status: "Booked", menuItems: [], currentOrder: null },
+  { _id: "mock_table_8", tableNo: 8, capacity: 4, status: "Available", menuItems: [], currentOrder: null }
 ];
 
 // Mock Staff Data

@@ -11,16 +11,8 @@ import {
   delay 
 } from '../config/mockData';
 
-// Dynamic import of axios to avoid issues if it's not available
-let axios = null;
-try {
-  axios = require('axios');
-  if (axios && axios.default) {
-    axios = axios.default;
-  }
-} catch (e) {
-  console.log('Axios not available yet for interception');
-}
+// Import axios directly to intercept it
+import axios from 'axios';
 
 // Original fetch function
 const originalFetch = window.fetch;
@@ -52,34 +44,108 @@ export const setupDemoMode = () => {
 
 // Setup axios request interceptor
 const setupAxiosInterception = () => {
-  if (!axiosInterceptEnabled && axios) {
-    // Add request interceptor to axios
-    axios.interceptors.request.use(
-      async (config) => {
-        const fullUrl = (config.baseURL || '') + (config.url || '');
-        if (fullUrl.includes('api/v1')) {
-          console.log('🎭 Demo Mode: Intercepting axios API call:', fullUrl);
-          
-          // Replace axios adapter with our mock
-          config.adapter = async (config) => {
-            const url = (config.baseURL || '') + config.url;
-            const options = {
-              method: config.method || 'GET',
-              body: config.data ? (typeof config.data === 'string' ? config.data : JSON.stringify(config.data)) : undefined,
-              headers: config.headers || {}
-            };
-            return mockApiCall(url, options);
-          };
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-    axiosInterceptEnabled = true;
-  } else if (!axiosInterceptEnabled) {
-    // Try again after a short delay if axios isn't loaded yet
-    setTimeout(() => setupAxiosInterception(), 200);
+  if (axiosInterceptEnabled) {
+    return;
   }
+  
+  if (!axios) {
+    // Try again after a short delay if axios isn't loaded yet
+    setTimeout(() => setupAxiosInterception(), 100);
+    return;
+  }
+
+  console.log('🎭 Setting up axios interception...');
+  
+  // Store original axios methods
+  const originalGet = axios.get;
+  const originalPost = axios.post;
+  const originalPatch = axios.patch;
+  const originalPut = axios.put;
+  const originalDelete = axios.delete;
+  
+  // Override axios methods
+  axios.get = async function(url, config) {
+    const fullUrl = (config?.baseURL || '') + url;
+    if (fullUrl.includes('api/v1')) {
+      console.log('🎭 Demo Mode: Intercepting axios.get:', fullUrl);
+      const response = await mockApiCall(fullUrl, { method: 'GET' });
+      return {
+        data: await response.json(),
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        config: config || {}
+      };
+    }
+    return originalGet.call(this, url, config);
+  };
+  
+  axios.post = async function(url, data, config) {
+    const fullUrl = (config?.baseURL || '') + url;
+    if (fullUrl.includes('api/v1')) {
+      console.log('🎭 Demo Mode: Intercepting axios.post:', fullUrl);
+      const response = await mockApiCall(fullUrl, { method: 'POST', body: JSON.stringify(data) });
+      return {
+        data: await response.json(),
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        config: config || {}
+      };
+    }
+    return originalPost.call(this, url, data, config);
+  };
+  
+  axios.patch = async function(url, data, config) {
+    const fullUrl = (config?.baseURL || '') + url;
+    if (fullUrl.includes('api/v1')) {
+      console.log('🎭 Demo Mode: Intercepting axios.patch:', fullUrl);
+      const response = await mockApiCall(fullUrl, { method: 'PATCH', body: JSON.stringify(data) });
+      return {
+        data: await response.json(),
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        config: config || {}
+      };
+    }
+    return originalPatch.call(this, url, data, config);
+  };
+  
+  axios.put = async function(url, data, config) {
+    const fullUrl = (config?.baseURL || '') + url;
+    if (fullUrl.includes('api/v1')) {
+      console.log('🎭 Demo Mode: Intercepting axios.put:', fullUrl);
+      const response = await mockApiCall(fullUrl, { method: 'PUT', body: JSON.stringify(data) });
+      return {
+        data: await response.json(),
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        config: config || {}
+      };
+    }
+    return originalPut.call(this, url, data, config);
+  };
+  
+  axios.delete = async function(url, config) {
+    const fullUrl = (config?.baseURL || '') + url;
+    if (fullUrl.includes('api/v1')) {
+      console.log('🎭 Demo Mode: Intercepting axios.delete:', fullUrl);
+      const response = await mockApiCall(fullUrl, { method: 'DELETE' });
+      return {
+        data: await response.json(),
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        config: config || {}
+      };
+    }
+    return originalDelete.call(this, url, config);
+  };
+  
+  axiosInterceptEnabled = true;
+  console.log('✅ Axios interception setup complete');
 };
 
 // Mock API call handler
