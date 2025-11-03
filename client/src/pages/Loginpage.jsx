@@ -202,17 +202,6 @@ const LoginPage = () => {
             <p className="text-red-500 text-center">{loginError}</p>
           )}
         </form>
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            Don't have an account?
-            <a
-              href="/signup"
-              className="ml-2 text-[#123499] hover:text-[#0f2a7a] font-medium"
-            >
-              Sign up
-            </a>
-          </p>
-        </div>
       </motion.div>
     </div>
   );

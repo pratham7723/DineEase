@@ -11,8 +11,20 @@ import {
   delay 
 } from '../config/mockData';
 
+// Dynamic import of axios to avoid issues if it's not available
+let axios = null;
+try {
+  axios = require('axios');
+  if (axios && axios.default) {
+    axios = axios.default;
+  }
+} catch (e) {
+  console.log('Axios not available yet for interception');
+}
+
 // Original fetch function
 const originalFetch = window.fetch;
+let axiosInterceptEnabled = false;
 
 // Demo mode fetch wrapper
 export const setupDemoMode = () => {
@@ -26,13 +38,48 @@ export const setupDemoMode = () => {
     
     // Only intercept API calls to our server
     if (urlStr.includes('api/v1')) {
-      console.log('🎭 Demo Mode: Intercepting API call:', urlStr);
+      console.log('🎭 Demo Mode: Intercepting fetch API call:', urlStr);
       return mockApiCall(urlStr, options);
     }
     
     // Let all other fetch calls pass through
     return originalFetch(url, options);
   };
+  
+  // Setup axios interception if axios is loaded
+  setupAxiosInterception();
+};
+
+// Setup axios request interceptor
+const setupAxiosInterception = () => {
+  if (!axiosInterceptEnabled && axios) {
+    // Add request interceptor to axios
+    axios.interceptors.request.use(
+      async (config) => {
+        const fullUrl = (config.baseURL || '') + (config.url || '');
+        if (fullUrl.includes('api/v1')) {
+          console.log('🎭 Demo Mode: Intercepting axios API call:', fullUrl);
+          
+          // Replace axios adapter with our mock
+          config.adapter = async (config) => {
+            const url = (config.baseURL || '') + config.url;
+            const options = {
+              method: config.method || 'GET',
+              body: config.data ? (typeof config.data === 'string' ? config.data : JSON.stringify(config.data)) : undefined,
+              headers: config.headers || {}
+            };
+            return mockApiCall(url, options);
+          };
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+    axiosInterceptEnabled = true;
+  } else if (!axiosInterceptEnabled) {
+    // Try again after a short delay if axios isn't loaded yet
+    setTimeout(() => setupAxiosInterception(), 200);
+  }
 };
 
 // Mock API call handler
@@ -50,7 +97,21 @@ const mockApiCall = async (url, options) => {
     switch (endpoint) {
       case 'orders':
         if (method === 'GET') {
-          // Check for query parameters
+          // Check if it's a single order request
+          const urlParts = url.split('/');
+          const lastPart = urlParts[urlParts.length - 1];
+          const isSingleOrder = !isNaN(parseInt(lastPart)) && urlParts.includes('orders');
+          
+          if (isSingleOrder) {
+            const orderId = lastPart;
+            const order = MOCK_ORDERS.find(o => o._id === orderId || o.orderId === parseInt(orderId));
+            if (order) {
+              return createResponse(order, 200);
+            }
+            return createErrorResponse('Order not found', 404);
+          }
+          
+          // Multiple orders
           const limit = parseInt(searchParams.get('limit')) || MOCK_ORDERS.length;
           const sort = searchParams.get('sort');
           
@@ -142,14 +203,35 @@ const mockApiCall = async (url, options) => {
           return createResponse({ success: true, data: newTable }, 201);
         }
         if (method === 'PATCH') {
-          const tableId = url.split('/').pop();
-          const body = JSON.parse(options.body);
-          const table = MOCK_TABLES.find(t => t._id === tableId);
-          if (table) {
-            Object.assign(table, body, { updatedAt: new Date().toISOString() });
-            return createResponse({ success: true, data: table }, 200);
+          // Check if it's a release endpoint
+          if (url.includes('/release')) {
+            const tableId = url.split('/')[url.split('/').length - 2]; // Get ID from .../tables/ID/release
+            const table = MOCK_TABLES.find(t => t._id === tableId);
+            if (table) {
+              Object.assign(table, { 
+                status: 'Available', 
+                order: '', 
+                billAmount: 0,
+                customerName: '',
+                customerPhone: '',
+                currentOrder: null,
+                hasActiveOrder: false,
+                menuItems: [],
+                updatedAt: new Date().toISOString() 
+              });
+              return createResponse({ success: true, data: table }, 200);
+            }
+            return createErrorResponse('Table not found', 404);
+          } else {
+            const tableId = url.split('/').pop();
+            const body = JSON.parse(options.body);
+            const table = MOCK_TABLES.find(t => t._id === tableId);
+            if (table) {
+              Object.assign(table, body, { updatedAt: new Date().toISOString() });
+              return createResponse({ success: true, data: table }, 200);
+            }
+            return createErrorResponse('Table not found', 404);
           }
-          return createErrorResponse('Table not found', 404);
         }
         break;
         
@@ -175,6 +257,18 @@ const mockApiCall = async (url, options) => {
       case 'reports/top-items':
         if (method === 'GET') {
           return createResponse(MOCK_REPORTS.topItems, 200);
+        }
+        break;
+        
+      case 'images/upload':
+        if (method === 'POST') {
+          // Mock image upload response
+          return createResponse({
+            success: true,
+            url: 'https://via.placeholder.com/400x300/123499/FFFFFF?text=Demo+Image',
+            fileId: `demo_image_${Date.now()}`,
+            name: 'demo-upload.jpg'
+          }, 201);
         }
         break;
         
