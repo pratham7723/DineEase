@@ -77,7 +77,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-orange-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -97,7 +97,7 @@ const LoginPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent"
                 placeholder="your@email.com"
                 required
                 autoComplete="username" // Add this
@@ -113,7 +113,7 @@ const LoginPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent"
                 placeholder="Enter your password"
                 required
                 minLength={6}
@@ -128,20 +128,20 @@ const LoginPage = () => {
                 name="remember"
                 checked={formData.remember}
                 onChange={handleChange}
-                className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                className="h-4 w-4 text-[#123499] focus:ring-[#123499] border-gray-300 rounded"
               />
               <label className="ml-2 block text-gray-700">Remember me</label>
             </div>
             <button
               type="button"
-              className="text-orange-600 hover:text-orange-700 text-sm font-medium"
+              className="text-[#123499] hover:text-[#0f2a7a] text-sm font-medium"
             >
               Forgot password?
             </button>
           </div>
           <button
             type="submit"
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-semibold shadow-md transition-colors duration-300"
+            className="w-full bg-[#123499] hover:bg-[#0f2a7a] text-white py-3 px-4 rounded-lg font-semibold shadow-md transition-colors duration-300"
             disabled={loading}
           >
             {loading ? "Loading..." : "Sign In"}
@@ -155,7 +155,7 @@ const LoginPage = () => {
             Don't have an account?
             <a
               href="/signup"
-              className="ml-2 text-orange-600 hover:text-orange-700 font-medium"
+              className="ml-2 text-[#123499] hover:text-[#0f2a7a] font-medium"
             >
               Sign up
             </a>

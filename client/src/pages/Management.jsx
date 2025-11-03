@@ -144,7 +144,7 @@ const Management = () => {
           </h3>
           {loading ? (
             <div className="flex justify-center items-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#123499]"></div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -199,7 +199,7 @@ const Management = () => {
                           onClick={() => handlePrintComplete(table.id)}
                         >
                           {({ loading }) => (
-                            <button className="bg-orange-600 text-white px-2 py-1 rounded text-sm hover:bg-orange-700">
+                            <button className="bg-[#123499] text-white px-2 py-1 rounded text-sm hover:bg-[#0f2a7a]">
                               {loading ? "Generating..." : "Print Bill"}
                             </button>
                           )}
@@ -312,7 +312,7 @@ const Management = () => {
                       onClick={() => handlePrintComplete(viewingOrder.id)}
                     >
                       {({ loading }) => (
-                        <button className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition">
+                        <button className="px-4 py-2 bg-[#123499] text-white rounded-md hover:bg-[#0f2a7a] transition">
                           {loading ? "Generating..." : "Print Bill & Release"}
                         </button>
                       )}
@@ -321,7 +321,7 @@ const Management = () => {
                 </div>
               ) : (
                 <div className="flex justify-center items-center h-32">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#123499]"></div>
                 </div>
               )}
             </div>

@@ -211,25 +211,25 @@ const Home = () => {
   try {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-orange-50 overflow-x-hidden">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50 overflow-x-hidden">
           {/* Navigation */}
           <nav className="fixed w-full bg-white bg-opacity-95 shadow-md z-50 backdrop-blur-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-20 items-center">
                 <motion.div initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 100 }} className="flex-shrink-0 flex items-center">
-                  <span className="text-2xl font-bold text-orange-600">Flavor</span><span className="text-2xl font-bold text-gray-800">Fusion</span>
+                  <span className="text-2xl font-bold text-[#123499]">Flavor</span><span className="text-2xl font-bold text-gray-800">Fusion</span>
                 </motion.div>
                 
                 {/* Desktop Navigation */}
                 <div className="hidden md:block">
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="ml-10 flex items-center space-x-8">
-                    <a href="#home" className="text-gray-800 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
-                    <a href="#menu" className="text-gray-800 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors">Menu</a>
-                    <a href="#ar" className="text-gray-800 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors">AR Menu</a>
-                    <a href="#features" className="text-gray-800 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors">Features</a>
-                    <a href="#testimonials" className="text-gray-800 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors">Testimonials</a>
-                    <a href="#contact" className="text-gray-800 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors">Contact</a>
-                    <a href="/Loginpage"  className="border border-orange-600 text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full text-sm font-medium transition-colors">Login</a>
+                    <a href="#home" className="text-gray-800 hover:text-[#123499] px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                    <a href="#menu" className="text-gray-800 hover:text-[#123499] px-3 py-2 text-sm font-medium transition-colors">Menu</a>
+                    <a href="#ar" className="text-gray-800 hover:text-[#123499] px-3 py-2 text-sm font-medium transition-colors">AR Menu</a>
+                    <a href="#features" className="text-gray-800 hover:text-[#123499] px-3 py-2 text-sm font-medium transition-colors">Features</a>
+                    <a href="#testimonials" className="text-gray-800 hover:text-[#123499] px-3 py-2 text-sm font-medium transition-colors">Testimonials</a>
+                    <a href="#contact" className="text-gray-800 hover:text-[#123499] px-3 py-2 text-sm font-medium transition-colors">Contact</a>
+                    <a href="/Loginpage"  className="border border-[#123499] text-[#123499] hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-medium transition-colors">Login</a>
                   </motion.div>
                 </div>
                 
@@ -237,7 +237,7 @@ const Home = () => {
                 <div className="md:hidden flex items-center">
                   <button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="text-gray-800 hover:text-orange-600 focus:outline-none"
+                    className="text-gray-800 hover:text-[#123499] focus:outline-none"
                   >
                     {mobileMenuOpen ? (
                       <FiX className="h-6 w-6" />
@@ -260,14 +260,14 @@ const Home = () => {
                   className="md:hidden overflow-hidden"
                 >
                   <div className="px-4 pt-2 pb-6 space-y-2">
-                    <a href="#home" className="block text-gray-800 hover:text-orange-600 px-3 py-2 rounded-md text-base font-medium">Home</a>
-                    <a href="#menu" className="block text-gray-800 hover:text-orange-600 px-3 py-2 rounded-md text-base font-medium">Menu</a>
-                    <a href="#ar" className="block text-gray-800 hover:text-orange-600 px-3 py-2 rounded-md text-base font-medium">AR Menu</a>
-                    <a href="#features" className="block text-gray-800 hover:text-orange-600 px-3 py-2 rounded-md text-base font-medium">Features</a>
-                    <a href="#testimonials" className="block text-gray-800 hover:text-orange-600 px-3 py-2 rounded-md text-base font-medium">Testimonials</a>
-                    <a href="#contact" className="block text-gray-800 hover:text-orange-600 px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                    <a href="#home" className="block text-gray-800 hover:text-[#123499] px-3 py-2 rounded-md text-base font-medium">Home</a>
+                    <a href="#menu" className="block text-gray-800 hover:text-[#123499] px-3 py-2 rounded-md text-base font-medium">Menu</a>
+                    <a href="#ar" className="block text-gray-800 hover:text-[#123499] px-3 py-2 rounded-md text-base font-medium">AR Menu</a>
+                    <a href="#features" className="block text-gray-800 hover:text-[#123499] px-3 py-2 rounded-md text-base font-medium">Features</a>
+                    <a href="#testimonials" className="block text-gray-800 hover:text-[#123499] px-3 py-2 rounded-md text-base font-medium">Testimonials</a>
+                    <a href="#contact" className="block text-gray-800 hover:text-[#123499] px-3 py-2 rounded-md text-base font-medium">Contact</a>
                     <div className="pt-4 border-t border-gray-200">
-                      <a href="/Loginpage" className="w-full mb-2 border border-orange-600 text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full text-sm font-medium transition-colors">Login</a>
+                      <a href="/Loginpage" className="w-full mb-2 border border-[#123499] text-[#123499] hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-medium transition-colors">Login</a>
                       
                     </div>
                   </div>
@@ -281,7 +281,7 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <motion.div initial="hidden" animate="visible" variants={slideInFromLeft}>
                 <motion.h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                  <span className="text-orange-600">Experience</span> Dining Like Never <span className="text-orange-600">Before</span>
+                  <span className="text-[#123499]">Experience</span> Dining Like Never <span className="text-[#123499]">Before</span>
                 </motion.h1>
                 <motion.p className="text-lg text-gray-600 mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
                   Discover our revolutionary AR menu that lets you visualize dishes in 3D before ordering. Combine this with our masterfully crafted cuisine for an unforgettable experience.
@@ -289,12 +289,12 @@ const Home = () => {
                 <motion.div className="flex flex-col sm:flex-row gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
                 <a 
   href={`${import.meta.env.VITE_REACT_APP_CLIENT_URL}/CustomerMenu`} 
-  className="bg-white text-orange-600 hover:bg-gray-100 px-8 py-4 rounded-full font-semibold transition-colors shadow-lg transform hover:scale-105 flex items-center justify-center gap-2"
+  className="bg-white text-[#123499] hover:bg-gray-100 px-8 py-4 rounded-full font-semibold transition-colors shadow-lg transform hover:scale-105 flex items-center justify-center gap-2"
 >
   <FiSmartphone className="text-xl" /> Try AR Menu
 </a>
 
-                  <button className="border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full font-semibold transition-colors transform hover:scale-105">
+                  <button className="border-2 border-[#123499] text-[#123499] hover:bg-blue-50 px-8 py-3 rounded-full font-semibold transition-colors transform hover:scale-105">
                     View Traditional Menu
                   </button>
                 </motion.div>
@@ -302,9 +302,9 @@ const Home = () => {
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="relative">
                 <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Restaurant interior" className="rounded-3xl shadow-2xl w-full h-auto" />
                 <motion.div className="absolute -bottom-8 -left-8 bg-white p-4 rounded-xl shadow-lg" initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.8 }}>
-                  <div className="text-orange-600 text-3xl mb-2">⭐</div><p className="font-bold text-gray-800">4.9 Rating</p><p className="text-sm text-gray-600">500+ Reviews</p>
+                  <div className="text-[#123499] text-3xl mb-2">⭐</div><p className="font-bold text-gray-800">4.9 Rating</p><p className="text-sm text-gray-600">500+ Reviews</p>
                 </motion.div>
-                <motion.div className="absolute -top-8 -right-8 bg-orange-600 text-white p-4 rounded-xl shadow-lg" initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 1 }}>
+                <motion.div className="absolute -top-8 -right-8 bg-[#123499] text-white p-4 rounded-xl shadow-lg" initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 1 }}>
                   <div className="text-3xl mb-2">🍽️</div><p className="font-bold">50+ Dishes</p><p className="text-sm">Fresh Daily</p>
                 </motion.div>
               </motion.div>
@@ -320,9 +320,9 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                   viewport={{ once: true }}
-                  className="p-6 rounded-xl bg-orange-50"
+                  className="p-6 rounded-xl bg-blue-50"
                 >
-                  <div className="text-4xl font-bold text-orange-600 mb-2">10K+</div>
+                  <div className="text-4xl font-bold text-[#123499] mb-2">10K+</div>
                   <p className="text-gray-600">Happy Customers</p>
                 </motion.div>
                 <motion.div 
@@ -330,9 +330,9 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   viewport={{ once: true }}
-                  className="p-6 rounded-xl bg-orange-50"
+                  className="p-6 rounded-xl bg-blue-50"
                 >
-                  <div className="text-4xl font-bold text-orange-600 mb-2">50+</div>
+                  <div className="text-4xl font-bold text-[#123499] mb-2">50+</div>
                   <p className="text-gray-600">Menu Items</p>
                 </motion.div>
                 <motion.div 
@@ -340,9 +340,9 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                   viewport={{ once: true }}
-                  className="p-6 rounded-xl bg-orange-50"
+                  className="p-6 rounded-xl bg-blue-50"
                 >
-                  <div className="text-4xl font-bold text-orange-600 mb-2">15</div>
+                  <div className="text-4xl font-bold text-[#123499] mb-2">15</div>
                   <p className="text-gray-600">Awards Won</p>
                 </motion.div>
                 <motion.div 
@@ -350,9 +350,9 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                   viewport={{ once: true }}
-                  className="p-6 rounded-xl bg-orange-50"
+                  className="p-6 rounded-xl bg-blue-50"
                 >
-                  <div className="text-4xl font-bold text-orange-600 mb-2">24/7</div>
+                  <div className="text-4xl font-bold text-[#123499] mb-2">24/7</div>
                   <p className="text-gray-600">Support</p>
                 </motion.div>
               </div>
@@ -360,7 +360,7 @@ const Home = () => {
           </section>
 
           {/* AR Menu Showcase - USP Section */}
-          <section id="ar" className="py-20 bg-gradient-to-r from-orange-50 to-amber-50">
+          <section id="ar" className="py-20 bg-gradient-to-r from-blue-50 to-amber-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Revolutionary AR Menu</h2>
@@ -374,7 +374,7 @@ const Home = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
                         <div>
                           <h3 className="text-white text-2xl font-bold">Veg Burger</h3>
-                          <p className="text-orange-300">Rotate with your finger to view 360°</p>
+                          <p className="text-blue-300">Rotate with your finger to view 360°</p>
                         </div>
                       </div>
                     </div>
@@ -384,7 +384,7 @@ const Home = () => {
                           <p className="text-gray-600">Current Selection</p>
                           <h4 className="text-xl font-bold text-gray-900">Veg Burger</h4>
                         </div>
-                        <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-full font-medium transition-colors shadow-md flex items-center gap-2">
+                        <button className="bg-[#123499] hover:bg-[#0f2a7a] text-white px-6 py-2 rounded-full font-medium transition-colors shadow-md flex items-center gap-2">
                           <FiShoppingCart /> Add to Order
                         </button>
                       </div>
@@ -392,7 +392,7 @@ const Home = () => {
                   </div>
                   <motion.div className="absolute -bottom-6 -right-6 bg-gray-900 text-white p-4 rounded-xl shadow-lg" initial={{ scale: 0 }} whileInView={{ scale: 1 }} transition={{ delay: 0.4 }} viewport={{ once: true }}>
                     <div className="flex items-center gap-2">
-                      <FiEye className="text-orange-400 text-xl" />
+                      <FiEye className="text-blue-400 text-xl" />
                       <p className="font-medium">AR Preview</p>
                     </div>
                   </motion.div>
@@ -400,7 +400,7 @@ const Home = () => {
                 <motion.div initial="hidden" whileInView="visible" variants={slideInFromRight} viewport={{ once: true }} className="space-y-8">
                   <motion.div variants={itemVariants} className="bg-white p-6 rounded-xl shadow-lg">
                     <div className="flex items-start gap-4">
-                      <div className="bg-orange-100 p-3 rounded-full text-orange-600">
+                      <div className="bg-blue-100 p-3 rounded-full text-[#123499]">
                         <FiSmartphone className="text-2xl" />
                       </div>
                       <div>
@@ -411,7 +411,7 @@ const Home = () => {
                   </motion.div>
                   <motion.div variants={itemVariants} className="bg-white p-6 rounded-xl shadow-lg">
                     <div className="flex items-start gap-4">
-                      <div className="bg-orange-100 p-3 rounded-full text-orange-600">
+                      <div className="bg-blue-100 p-3 rounded-full text-[#123499]">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
@@ -424,7 +424,7 @@ const Home = () => {
                   </motion.div>
                   <motion.div variants={itemVariants} className="bg-white p-6 rounded-xl shadow-lg">
                     <div className="flex items-start gap-4">
-                      <div className="bg-orange-100 p-3 rounded-full text-orange-600">
+                      <div className="bg-blue-100 p-3 rounded-full text-[#123499]">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
@@ -458,8 +458,8 @@ const Home = () => {
                     transition={{ duration: 0.5 }} 
                     className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
                   >
-                    <div className="bg-gradient-to-br from-orange-100 to-amber-100 p-12 rounded-3xl shadow-xl">
-                      <div className="text-orange-600 mb-6">
+                    <div className="bg-gradient-to-br from-blue-100 to-amber-100 p-12 rounded-3xl shadow-xl">
+                      <div className="text-[#123499] mb-6">
                         {features[currentFeature].icon}
                       </div>
                       <h3 className="text-3xl font-bold text-gray-900 mb-4">{features[currentFeature].title}</h3>
@@ -469,7 +469,7 @@ const Home = () => {
                       <h3 className="text-3xl font-bold text-gray-900">{features[currentFeature].title}</h3>
                       <p className="text-xl text-gray-600">{features[currentFeature].description}</p>
                       <div className="pt-4">
-                        <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg flex items-center gap-2">
+                        <button className="bg-[#123499] hover:bg-[#0f2a7a] text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg flex items-center gap-2">
                           Learn More
                         </button>
                       </div>
@@ -477,10 +477,10 @@ const Home = () => {
                   </motion.div>
                 </div>
                 
-                <button onClick={prevFeature} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white p-3 rounded-full shadow-lg text-orange-600 hover:text-orange-700 z-10">
+                <button onClick={prevFeature} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white p-3 rounded-full shadow-lg text-[#123499] hover:text-[#0f2a7a] z-10">
                   <FiArrowLeft className="text-2xl" />
                 </button>
-                <button onClick={nextFeature} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white p-3 rounded-full shadow-lg text-orange-600 hover:text-orange-700 z-10">
+                <button onClick={nextFeature} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white p-3 rounded-full shadow-lg text-[#123499] hover:text-[#0f2a7a] z-10">
                   <FiArrowRight className="text-2xl" />
                 </button>
                 
@@ -489,7 +489,7 @@ const Home = () => {
                     <button 
                       key={index} 
                       onClick={() => setCurrentFeature(index)} 
-                      className={`w-3 h-3 rounded-full ${currentFeature === index ? 'bg-orange-600' : 'bg-gray-300'}`} 
+                      className={`w-3 h-3 rounded-full ${currentFeature === index ? 'bg-[#123499]' : 'bg-gray-300'}`} 
                     />
                   ))}
                 </div>
@@ -519,7 +519,7 @@ const Home = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
                         <div>
                           <h3 className="text-white text-3xl font-bold mb-2">{dishes[currentDish].name}</h3>
-                          <p className="text-orange-200 text-lg">{dishes[currentDish].description}</p>
+                          <p className="text-blue-200 text-lg">{dishes[currentDish].description}</p>
                         </div>
                       </div>
                     </div>
@@ -527,9 +527,9 @@ const Home = () => {
                       <h3 className="text-3xl font-bold text-gray-900">{dishes[currentDish].name}</h3>
                       <p className="text-xl text-gray-600">{dishes[currentDish].description}</p>
                       <div className="flex items-center gap-4">
-                        <span className="bg-orange-100 text-orange-800 px-4 py-2 rounded-full text-lg font-semibold">{dishes[currentDish].price}</span>
+                        <span className="bg-blue-100 text-[#0d2580] px-4 py-2 rounded-full text-lg font-semibold">{dishes[currentDish].price}</span>
                         <span className="text-gray-500">•</span>
-                        <div className="flex items-center gap-1 text-orange-600">
+                        <div className="flex items-center gap-1 text-[#123499]">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
                           </svg>
@@ -552,7 +552,7 @@ const Home = () => {
                         <h4 className="font-semibold text-gray-900 mb-2">Key Ingredients</h4>
                         <div className="flex flex-wrap gap-2">
                           {dishes[currentDish].ingredients.map((ingredient, index) => (
-                            <span key={index} className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                            <span key={index} className="bg-blue-100 text-[#0d2580] px-3 py-1 rounded-full text-sm">
                               {ingredient}
                             </span>
                           ))}
@@ -560,17 +560,17 @@ const Home = () => {
                       </div>
                       
                       <div className="pt-4">
-                        <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg flex items-center gap-2">
+                        <button className="bg-[#123499] hover:bg-[#0f2a7a] text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg flex items-center gap-2">
                           <FiShoppingCart /> Add to Order
                         </button>
                       </div>
                     </div>
                   </motion.div>
                 </div>
-                <button onClick={prevDish} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white p-3 rounded-full shadow-lg text-orange-600 hover:text-orange-700 z-10">
+                <button onClick={prevDish} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white p-3 rounded-full shadow-lg text-[#123499] hover:text-[#0f2a7a] z-10">
                   <FiArrowLeft className="text-2xl" />
                 </button>
-                <button onClick={nextDish} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white p-3 rounded-full shadow-lg text-orange-600 hover:text-orange-700 z-10">
+                <button onClick={nextDish} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white p-3 rounded-full shadow-lg text-[#123499] hover:text-[#0f2a7a] z-10">
                   <FiArrowRight className="text-2xl" />
                 </button>
                 <div className="flex justify-center mt-8 gap-2">
@@ -578,7 +578,7 @@ const Home = () => {
                     <button 
                       key={index} 
                       onClick={() => setCurrentDish(index)} 
-                      className={`w-3 h-3 rounded-full ${currentDish === index ? 'bg-orange-600' : 'bg-gray-300'}`} 
+                      className={`w-3 h-3 rounded-full ${currentDish === index ? 'bg-[#123499]' : 'bg-gray-300'}`} 
                     />
                   ))}
                 </div>
@@ -610,10 +610,10 @@ const Home = () => {
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-xl font-bold text-gray-900">{dish.name}</h3>
-                        <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-semibold">{dish.price}</span>
+                        <span className="bg-blue-100 text-[#0d2580] px-3 py-1 rounded-full text-sm font-semibold">{dish.price}</span>
                       </div>
                       <p className="text-gray-600 mb-4">{dish.description}</p>
-                      <button className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                      <button className="w-full bg-[#123499] hover:bg-[#0f2a7a] text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
                         <FiShoppingCart /> Add to Order
                       </button>
                     </div>
@@ -634,7 +634,7 @@ const Home = () => {
                       <p className="text-gray-600 mb-4">We have many more dishes waiting for you</p>
                       <a 
   href={`${import.meta.env.VITE_REACT_APP_CLIENT_URL}/CustomerMenu`} 
-  className="border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full font-medium transition-colors"
+  className="border-2 border-[#123499] text-[#123499] hover:bg-blue-50 px-6 py-2 rounded-full font-medium transition-colors"
 >
   View Full Menu
 </a>
@@ -668,10 +668,10 @@ const Home = () => {
                         <img 
                           src={testimonials[currentTestimonial].avatar} 
                           alt={testimonials[currentTestimonial].author} 
-                          className="w-16 h-16 rounded-full object-cover border-2 border-orange-500"
+                          className="w-16 h-16 rounded-full object-cover border-2 border-[#123499]"
                         />
                       </div>
-                      <div className="text-orange-400 text-5xl mb-6">"</div>
+                      <div className="text-blue-400 text-5xl mb-6">"</div>
                       <p className="text-xl text-gray-300 mb-8">{testimonials[currentTestimonial].quote}</p>
                       <div className="border-t border-gray-700 pt-6 w-full max-w-md">
                         <p className="font-bold text-xl">{testimonials[currentTestimonial].author}</p>
@@ -684,7 +684,7 @@ const Home = () => {
                   <button onClick={prevTestimonial} className="bg-gray-700 hover:bg-gray-600 p-3 rounded-full text-white">
                     <FiArrowLeft className="text-xl" />
                   </button>
-                  <button onClick={nextTestimonial} className="bg-orange-600 hover:bg-orange-700 p-3 rounded-full text-white">
+                  <button onClick={nextTestimonial} className="bg-[#123499] hover:bg-[#0f2a7a] p-3 rounded-full text-white">
                     <FiArrowRight className="text-xl" />
                   </button>
                 </div>
@@ -695,7 +695,7 @@ const Home = () => {
           {/* Reservation Section */}
           <section className="py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-3xl shadow-2xl overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-500 to-amber-500 rounded-3xl shadow-2xl overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-2">
                   <div className="p-12 text-white">
                     <motion.h2 
@@ -711,7 +711,7 @@ const Home = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
                       viewport={{ once: true }}
-                      className="text-xl text-orange-100 mb-8"
+                      className="text-xl text-blue-100 mb-8"
                     >
                       Experience the future of dining at FlavorFusion
                     </motion.p>
@@ -750,7 +750,7 @@ const Home = () => {
                         <label className="block text-gray-700 mb-2">Full Name</label>
                         <input 
                           type="text" 
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent" 
                           placeholder="Your name"
                         />
                       </div>
@@ -758,7 +758,7 @@ const Home = () => {
                         <label className="block text-gray-700 mb-2">Email Address</label>
                         <input 
                           type="email" 
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent" 
                           placeholder="your@email.com"
                         />
                       </div>
@@ -767,20 +767,20 @@ const Home = () => {
                           <label className="block text-gray-700 mb-2">Date</label>
                           <input 
                             type="date" 
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent" 
                           />
                         </div>
                         <div>
                           <label className="block text-gray-700 mb-2">Time</label>
                           <input 
                             type="time" 
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent" 
                           />
                         </div>
                       </div>
                       <div>
                         <label className="block text-gray-700 mb-2">Number of Guests</label>
-                        <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#123499] focus:border-transparent">
                           <option>1 person</option>
                           <option>2 people</option>
                           <option>3 people</option>
@@ -790,7 +790,7 @@ const Home = () => {
                       </div>
                       <button
                         type="submit"
-                        className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-semibold shadow-md transition-colors duration-300"
+                        className="w-full bg-[#123499] hover:bg-[#0f2a7a] text-white py-3 px-4 rounded-lg font-semibold shadow-md transition-colors duration-300"
                       >
                         Reserve Now
                       </button>
@@ -802,7 +802,7 @@ const Home = () => {
           </section>
 
           {/* Final CTA */}
-          <section className="py-20 bg-gradient-to-r from-orange-600 to-amber-600">
+          <section className="py-20 bg-gradient-to-r from-[#123499] to-amber-600">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }} 
@@ -812,19 +812,19 @@ const Home = () => {
                 className="bg-white/10 backdrop-blur-sm p-12 rounded-3xl shadow-2xl"
               >
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Experience the Future of Dining?</h2>
-                <p className="text-xl text-orange-100 mb-8">
+                <p className="text-xl text-blue-100 mb-8">
                   Visit us today and explore our revolutionary AR menu combined with world-class cuisine.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <a 
   href={`${import.meta.env.VITE_REACT_APP_CLIENT_URL}/CustomerMenu`} 
-  className="bg-white text-orange-600 hover:bg-gray-100 px-8 py-4 rounded-full font-semibold transition-colors shadow-lg transform hover:scale-105 flex items-center justify-center gap-2"
+  className="bg-white text-[#123499] hover:bg-gray-100 px-8 py-4 rounded-full font-semibold transition-colors shadow-lg transform hover:scale-105 flex items-center justify-center gap-2"
 >
   <FiSmartphone className="text-xl" /> Try AR Menu Demo
 </a>
 
 
-                  <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-orange-600 px-8 py-4 rounded-full font-semibold transition-colors transform hover:scale-105">
+                  <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#123499] px-8 py-4 rounded-full font-semibold transition-colors transform hover:scale-105">
                     Book Your Table Now
                   </button>
                 </div>
@@ -838,7 +838,7 @@ const Home = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <h3 className="text-xl font-bold mb-4 flex items-center">
-                    <span className="text-orange-600">Flavor</span>
+                    <span className="text-[#123499]">Flavor</span>
                     <span className="text-white">Fusion</span>
                   </h3>
                   <p className="text-gray-400 mb-4">

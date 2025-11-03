@@ -188,7 +188,7 @@ const Staff = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
-            <Users className="h-8 w-8 text-orange-600" />
+            <Users className="h-8 w-8 text-[#123499]" />
             <h2 className="text-3xl font-bold text-gray-800">Staff Management</h2>
           </div>
         </div>
@@ -306,7 +306,7 @@ const Staff = () => {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#123499]"></div>
               </div>
             ) : (
               <div className="overflow-x-auto">

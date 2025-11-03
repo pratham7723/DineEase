@@ -571,7 +571,7 @@ const CustomerMenu = () => {
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
                             required
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
                           />
                         </div>
                         <div>
@@ -588,7 +588,7 @@ const CustomerMenu = () => {
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             required
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
                           />
                         </div>
                       </div>
@@ -597,7 +597,7 @@ const CustomerMenu = () => {
                         <button
                           onClick={placeOrder}
                           disabled={isProcessing}
-                          className="flex w-full items-center justify-center rounded-md border border-transparent bg-orange-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50"
+                          className="flex w-full items-center justify-center rounded-md border border-transparent bg-[#123499] px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-[#0f2a7a] focus:outline-none focus:ring-2 focus:ring-[#123499] focus:ring-offset-2 disabled:opacity-50"
                         >
                           {isProcessing ? (
                             <>
@@ -618,7 +618,7 @@ const CustomerMenu = () => {
                           <button
                             type="button"
                             onClick={() => setCartOpen(false)}
-                            className="font-medium text-orange-600 hover:text-orange-500"
+                            className="font-medium text-[#123499] hover:text-[#0f2a7a]"
                           >
                             Continue Shopping
                             <span aria-hidden="true"> &rarr;</span>

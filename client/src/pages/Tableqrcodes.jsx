@@ -132,7 +132,7 @@ const TableOrders = () => {
           </div>
           <button
             onClick={() => openModal()}
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition duration-300"
+            className="bg-[#123499] text-white px-4 py-2 rounded-lg hover:bg-[#0f2a7a] transition duration-300"
           >
             Add New Table
           </button>
@@ -261,7 +261,7 @@ const TableOrders = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
+                    className="px-4 py-2 bg-[#123499] text-white rounded hover:bg-[#0f2a7a]"
                   >
                     {currentTable ? 'Update' : 'Add'} Table
                   </button>

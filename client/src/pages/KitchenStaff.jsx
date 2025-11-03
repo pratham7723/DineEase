@@ -125,7 +125,7 @@ const KitchenStaff = () => {
       <div className="min-h-screen bg-gray-100 p-8 flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl">Loading orders...</p>
-          <div className="mt-4 w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="mt-4 w-12 h-12 border-4 border-[#123499] border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
     );
@@ -139,7 +139,7 @@ const KitchenStaff = () => {
           <p className="mt-2 p-4 bg-red-50 rounded-lg">{error}</p>
           <button 
             onClick={fetchOrders}
-            className="mt-4 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+            className="mt-4 bg-[#123499] text-white px-4 py-2 rounded-lg hover:bg-[#0f2a7a] transition-colors"
             disabled={loading}
           >
             {loading ? 'Retrying...' : 'Retry'}
@@ -162,7 +162,7 @@ const KitchenStaff = () => {
         </div>
         <button 
           onClick={fetchOrders}
-          className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center"
+          className="bg-[#123499] text-white px-4 py-2 rounded-lg hover:bg-[#0f2a7a] transition-colors flex items-center"
           disabled={loading}
         >
           {loading ? (
@@ -182,7 +182,7 @@ const KitchenStaff = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-800">Pending Orders</h3>
-            <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+            <span className="bg-blue-100 text-[#123499] px-3 py-1 rounded-full text-sm">
               {getOrdersByStatus('pending').length}
             </span>
           </div>
@@ -206,7 +206,7 @@ const KitchenStaff = () => {
                     <p className="text-sm text-gray-600 mt-2">{formatItems(order.items)}</p>
                     <p className="text-sm font-medium mt-2">Total: ₹{order.total}</p>
                     {order.specialInstructions && (
-                      <p className="text-sm text-orange-600 mt-2">
+                      <p className="text-sm text-[#123499] mt-2">
                         <span className="font-medium">Notes:</span> {order.specialInstructions}
                       </p>
                     )}
@@ -214,7 +214,7 @@ const KitchenStaff = () => {
                   <div className="ml-4 flex flex-col space-y-2 min-w-[120px]">
                     <button
                       onClick={() => updateOrderStatus(order.orderId, 'preparing')}
-                      className="bg-orange-600 text-white px-3 py-2 rounded text-sm hover:bg-orange-700 transition-colors flex items-center justify-center"
+                      className="bg-[#123499] text-white px-3 py-2 rounded text-sm hover:bg-[#0f2a7a] transition-colors flex items-center justify-center"
                       disabled={isUpdating}
                     >
                       {isUpdating ? 'Processing...' : 'Start Preparing'}
@@ -259,7 +259,7 @@ const KitchenStaff = () => {
                     <p className="text-sm text-gray-600 mt-2">{formatItems(order.items)}</p>
                     <p className="text-sm font-medium mt-2">Total: ₹{order.total}</p>
                     {order.specialInstructions && (
-                      <p className="text-sm text-orange-600 mt-2">
+                      <p className="text-sm text-[#123499] mt-2">
                         <span className="font-medium">Notes:</span> {order.specialInstructions}
                       </p>
                     )}

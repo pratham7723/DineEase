@@ -150,7 +150,7 @@ const Reports = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Daily Orders & Revenue</h3>
           {loading.daily ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#123499]"></div>
             </div>
           ) : error.daily ? (
             <p className="text-red-500">{error.daily}</p>
@@ -202,7 +202,7 @@ const Reports = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Most Ordered Items</h3>
           {loading.items ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#123499]"></div>
             </div>
           ) : error.items ? (
             <p className="text-red-500">{error.items}</p>

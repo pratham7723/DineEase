@@ -17,7 +17,7 @@ const TableOrders = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800">Table Management</h2>
-          <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition duration-300">
+          <button className="bg-[#123499] text-white px-4 py-2 rounded-lg hover:bg-[#0f2a7a] transition duration-300">
             Add Table
           </button>
         </div>
@@ -52,7 +52,7 @@ const TableOrders = () => {
 
               {/* Action Buttons */}
               <div className="mt-4 flex justify-center space-x-2">
-                <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition duration-300">
+                <button className="bg-[#123499] text-white px-4 py-2 rounded-lg hover:bg-[#0f2a7a] transition duration-300">
                   Edit
                 </button>
                 <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">
