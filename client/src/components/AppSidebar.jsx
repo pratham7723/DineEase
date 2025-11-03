@@ -61,7 +61,7 @@ const AppSidebar = () => {
         <div className="flex items-center gap-2 px-2 py-2">
           <ChefHat className="h-8 w-8 text-primary" />
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">FlavorFusion</span>
+            <span className="truncate font-semibold">DineEase</span>
             <span className="truncate text-xs text-muted-foreground">Restaurant Management</span>
           </div>
         </div>

@@ -217,7 +217,7 @@ const Home = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-20 items-center">
                 <motion.div initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 100 }} className="flex-shrink-0 flex items-center">
-                  <span className="text-2xl font-bold text-[#123499]">Flavor</span><span className="text-2xl font-bold text-gray-800">Fusion</span>
+                  <span className="text-2xl font-bold text-[#123499]">Dine</span><span className="text-2xl font-bold text-gray-800">Ease</span>
                 </motion.div>
                 
                 {/* Desktop Navigation */}
@@ -713,7 +713,7 @@ const Home = () => {
                       viewport={{ once: true }}
                       className="text-xl text-blue-100 mb-8"
                     >
-                      Experience the future of dining at FlavorFusion
+                      Experience the future of dining at DineEase
                     </motion.p>
                     <motion.div 
                       initial={{ opacity: 0, y: 20 }}
@@ -837,9 +837,9 @@ const Home = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                  <h3 className="text-xl font-bold mb-4 flex items-center">
-                    <span className="text-[#123499]">Flavor</span>
-                    <span className="text-white">Fusion</span>
+                    <h3 className="text-xl font-bold mb-4 flex items-center">
+                    <span className="text-[#123499]">Dine</span>
+                    <span className="text-white">Ease</span>
                   </h3>
                   <p className="text-gray-400 mb-4">
                     Where culinary excellence meets technological innovation for an unforgettable dining experience.
@@ -874,7 +874,7 @@ const Home = () => {
                     <li className="flex items-center gap-2"><FiMapPin />Nana Mauva</li>
                     <li className="flex items-center gap-2">Rajkot, Gujarat</li>
                     <li className="flex items-center gap-2">Phone: 7016498352</li>
-                    <li className="flex items-center gap-2">Email: info@FlavorFusion.com</li>
+                    <li className="flex items-center gap-2">Email: info@DineEase.com</li>
                   </ul>
                 </div>
                 <div>
@@ -887,7 +887,7 @@ const Home = () => {
                 </div>
               </div>
               <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>© {new Date().getFullYear()} FlavorFusion. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} DineEase. All rights reserved.</p>
               </div>
             </div>
           </footer>

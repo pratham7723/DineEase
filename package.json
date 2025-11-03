@@ -1,7 +1,7 @@
 {
-  "name": "flavorfusion",
+  "name": "dineease",
   "version": "1.0.0",
-  "description": "🍽️ FlavorFusion - Complete Restaurant Management System with AR Menu, Order Management, and Real-time Updates",
+  "description": "🍽️ DineEase - Complete Restaurant Management System with AR Menu, Order Management, and Real-time Updates",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "cd client && npm run dev",

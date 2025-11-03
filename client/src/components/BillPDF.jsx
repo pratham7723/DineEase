@@ -149,7 +149,7 @@ const BillPDF = ({ table, customer }) => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.restaurantName}>FlavorFusion</Text>
+            <Text style={styles.restaurantName}>DineEase</Text>
             <Text>Nana Mauva,Rajkot</Text>
             <Text>GSTIN: 22ABCDE1234F1Z5</Text>
           </View>
