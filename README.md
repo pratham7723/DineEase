@@ -2,8 +2,11 @@
 
 Complete Restaurant Management System with AR Menu, Order Management, and Real-time Updates
 
+**🎭 Demo Mode Available!** Run the app with demo data - no backend or database required!
+
 ## 📋 Table of Contents
 
+- [Quick Start (Demo Mode)](#quick-start-demo-mode)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
@@ -14,6 +17,29 @@ Complete Restaurant Management System with AR Menu, Order Management, and Real-t
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
+
+## ⚡ Quick Start (Demo Mode)
+
+Get started in 3 minutes - no backend needed!
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/pratham7723/DineEase.git
+cd DineEase
+
+# 2. Install dependencies
+cd client
+npm install
+
+# 3. Run the app
+npm run dev
+```
+
+**Demo Login Credentials:**
+- owner@dineease.com / owner123
+- manager@dineease.com / manager123
+
+**📖 Full installation guide:** See [INSTALL.md](INSTALL.md) for detailed Windows/Linux/Mac instructions
 
 ## ✨ Features
 
@@ -50,10 +76,11 @@ Complete Restaurant Management System with AR Menu, Order Management, and Real-t
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** (v18.0.0 or higher)
-- **npm** (v8.0.0 or higher) or **yarn**
-- **MongoDB** - Either local installation or MongoDB Atlas account
-- **ImageKit Account** - For image uploads (optional for local development)
+- **Node.js** (v18.0.0 or higher) - [Download here](https://nodejs.org/)
+- **npm** (v8.0.0 or higher) - Comes with Node.js
+- **Git** - For cloning the repository
+- **MongoDB** - Only needed for full stack mode (not required for demo)
+- **ImageKit Account** - Only for image uploads (optional)
 
 ## 🚀 Installation
 
@@ -66,6 +93,16 @@ cd DineEase
 
 ### 2. Install Dependencies
 
+**For Demo Mode (Recommended for quick start):**
+```bash
+# Only need to install client dependencies
+cd client
+npm install
+```
+
+**Note**: If you're on Windows and get an error, make sure Node.js is installed: [Download Node.js](https://nodejs.org/)
+
+**For Full Stack Development:**
 You can install dependencies for all packages at once:
 
 ```bash
@@ -155,9 +192,33 @@ JWT_SECRET=your_jwt_secret_key
 
 ## ▶️ Running the Application
 
-### Development Mode
+### 🎭 Demo Mode (Frontend Only)
 
-Run both client and server concurrently:
+**The app is configured to run in DEMO MODE by default** - no backend or database required!
+
+**Quick Start:**
+```bash
+# Clone and install dependencies
+cd client
+npm install
+
+# Run the app
+npm run dev
+```
+
+The app will start at http://localhost:5173 with demo data!
+
+**Demo Credentials:**
+- **Owner**: owner@dineease.com / owner123
+- **Manager**: manager@dineease.com / manager123
+- **Waiter**: waiter@dineease.com / waiter123
+- **Chef**: chef@dineease.com / chef123
+
+**Note**: All backend calls are automatically intercepted and return mock data when DEMO_MODE is enabled (default). To use real backend, set `DEMO_MODE = false` in `client/src/config/demoMode.js`
+
+### Full Stack Development Mode
+
+If you want to use the real backend:
 
 ```bash
 npm run dev
