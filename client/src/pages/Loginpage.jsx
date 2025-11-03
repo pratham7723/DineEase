@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { FiMail, FiLock } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { DEMO_MODE, DEMO_USERS, generateDemoToken } from "../config/demoMode";
+import { delay } from "../config/mockData";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -33,27 +35,50 @@ const LoginPage = () => {
     setLoginError("");
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
+      let data;
+      
+      // Check if demo mode is enabled
+      if (DEMO_MODE) {
+        // Use demo login
+        await delay(800); // Simulate network delay
+        const user = DEMO_USERS.find(u => u.email === formData.email && u.password === formData.password);
+        
+        if (!user) {
+          throw new Error("Invalid email or password");
         }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle specific error messages from backend
-        throw new Error(
-          data.error || "Login failed. Please check your credentials."
+        
+        const token = generateDemoToken(user.id);
+        data = {
+          user: {
+            ...user,
+            restaurant: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            __v: 0
+          },
+          token
+        };
+      } else {
+        // Use real backend
+        const response = await fetch(
+          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              password: formData.password,
+            }),
+          }
         );
+
+        data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Login failed. Please check your credentials.");
+        }
       }
 
       // Store token and user data using AuthContext
@@ -87,6 +112,33 @@ const LoginPage = () => {
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
           Welcome Back
         </h2>
+        
+        {/* Demo Mode Banner */}
+        {DEMO_MODE && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm font-semibold text-[#123499] mb-2">🎭 Demo Mode Active</p>
+            <p className="text-xs text-gray-600">Try these credentials:</p>
+            <div className="mt-2 space-y-1">
+              {DEMO_USERS.map((user, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setFormData({
+                      email: user.email,
+                      password: user.password,
+                      remember: false
+                    });
+                  }}
+                  className="block w-full text-left text-xs text-gray-700 hover:text-[#123499] transition-colors"
+                >
+                  {user.role}: {user.email}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700 mb-2">Email Address</label>
