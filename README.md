@@ -1,4 +1,4 @@
-# 🍽️ FlavorFusion
+# 🍽️ DineEase
 
 Complete Restaurant Management System with AR Menu, Order Management, and Real-time Updates
 
@@ -60,8 +60,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/pratham7723/flavorfusion.git
-cd flavorfusion
+git clone https://github.com/pratham7723/DineEase.git
+cd DineEase
 ```
 
 ### 2. Install Dependencies
@@ -95,7 +95,7 @@ Create a `.env.development.local` file in the `server/` directory:
 
 ```env
 NODE_ENV=development
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=mongodb://localhost:27017/dineease
 CLIENT_URL=http://localhost:5173
 SERVER_URL=http://localhost:8000
 PORT=8000
@@ -104,6 +104,8 @@ IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
 JWT_SECRET=your_jwt_secret_key
 ```
+
+**Note**: The app is now configured to use **local MongoDB** by default. If you want to use MongoDB Atlas (cloud), change the `MONGO_URI` to your Atlas connection string.
 
 ### Client Environment Variables
 
@@ -140,7 +142,7 @@ JWT_SECRET=your_jwt_secret_key
 ### Getting Environment Variable Values
 
 1. **MongoDB URI**: 
-   - For local MongoDB: `mongodb://localhost:27017/flavorfusion`
+   - For local MongoDB: `mongodb://localhost:27017/dineease` (default)
    - For MongoDB Atlas: Get connection string from your Atlas cluster
 
 2. **ImageKit Credentials**:
@@ -200,7 +202,7 @@ cd server && npm start
 ## 📁 Project Structure
 
 ```
-flavorfusion/
+dineease/
 ├── client/                 # React frontend application
 │   ├── src/
 │   │   ├── components/    # Reusable components
@@ -355,6 +357,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **pratham7723**
 
 - GitHub: [@pratham7723](https://github.com/pratham7723)
+- Repository: [DineEase](https://github.com/pratham7723/DineEase)
 
 ## 🙏 Acknowledgments
 
