@@ -167,6 +167,10 @@ media/
 # Cursor IDE
 .cursor/
 
+# Migration scripts with sensitive data
+migrate-db.js
+server/migrate-db.js
+
 # Vercel
 .vercel
 
