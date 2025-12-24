@@ -26,6 +26,11 @@ const menuSchema = new mongoose.Schema(
     arModel: {
       type: String,
     },
+    tags: {
+      type: [String],
+      default: [],
+      enum: ["Jain", "Chef's Special", "Spicy", "Bestseller", "New", "Vegan", "Gluten-Free", "Healthy"],
+    },
     restaurantId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Restaurant",

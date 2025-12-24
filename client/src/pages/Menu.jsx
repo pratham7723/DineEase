@@ -14,14 +14,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Upload, 
-  Image, 
-  Box, 
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  Upload,
+  Image,
+  Box,
   AlertCircle,
   CheckCircle,
   XCircle,
@@ -80,6 +80,7 @@ const Menu = () => {
     status: "Available",
     photo: "",
     arModel: "",
+    tags: [],
   });
 
   // Function to extract unique categories from menu items
@@ -143,8 +144,7 @@ const Menu = () => {
       if (editingItem) {
         // Update existing item
         response = await axios.put(
-          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/menus/${
-            editingItem._id
+          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/menus/${editingItem._id
           }`,
           newItem
         );
@@ -180,6 +180,7 @@ const Menu = () => {
         status: "Available",
         photo: "",
         arModel: "",
+        tags: [],
       });
       setEditingItem(null);
       setIsDialogOpen(false);
@@ -201,6 +202,7 @@ const Menu = () => {
       status: item.status,
       photo: item.photo,
       arModel: item.arModel,
+      tags: item.tags || [],
     });
     setIsDialogOpen(true);
   };
@@ -308,6 +310,7 @@ const Menu = () => {
               status: "Available",
               photo: "",
               arModel: "",
+              tags: [],
             });
           }
         }}>
@@ -324,7 +327,7 @@ const Menu = () => {
                 {editingItem ? "Edit Menu Item" : "Add New Menu Item"}
               </DialogTitle>
             </DialogHeader>
-            
+
             <form onSubmit={(e) => {
               e.preventDefault();
               addMenuItem();
@@ -341,7 +344,7 @@ const Menu = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="category">Category *</Label>
                   <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
@@ -358,10 +361,10 @@ const Menu = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
                       <Command>
-                        <CommandInput 
-                          placeholder="Search or create category..." 
+                        <CommandInput
+                          placeholder="Search or create category..."
                           value={newItem.category}
-                          onValueChange={(value) => setNewItem({...newItem, category: value})}
+                          onValueChange={(value) => setNewItem({ ...newItem, category: value })}
                         />
                         <CommandList>
                           <CommandEmpty>
@@ -373,7 +376,7 @@ const Menu = () => {
                                 size="sm"
                                 onClick={() => {
                                   if (newItem.category.trim()) {
-                                    setNewItem({...newItem, category: newItem.category.trim()});
+                                    setNewItem({ ...newItem, category: newItem.category.trim() });
                                     setCategoryOpen(false);
                                   }
                                 }}
@@ -390,14 +393,13 @@ const Menu = () => {
                                 key={category}
                                 value={category}
                                 onSelect={() => {
-                                  setNewItem({...newItem, category});
+                                  setNewItem({ ...newItem, category });
                                   setCategoryOpen(false);
                                 }}
                               >
                                 <Check
-                                  className={`mr-2 h-4 w-4 ${
-                                    newItem.category === category ? "opacity-100" : "opacity-0"
-                                  }`}
+                                  className={`mr-2 h-4 w-4 ${newItem.category === category ? "opacity-100" : "opacity-0"
+                                    }`}
                                 />
                                 {category}
                               </CommandItem>
@@ -411,7 +413,7 @@ const Menu = () => {
                     Type to search existing categories or create a new one
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="price">Price (₹) *</Label>
                   <Input
@@ -424,13 +426,13 @@ const Menu = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
                   <Select
                     name="status"
                     value={newItem.status}
-                    onValueChange={(value) => setNewItem({...newItem, status: value})}
+                    onValueChange={(value) => setNewItem({ ...newItem, status: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
@@ -441,6 +443,32 @@ const Menu = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              {/* Special Tags */}
+              <div className="space-y-2">
+                <Label>Special Tags</Label>
+                <div className="flex flex-wrap gap-2 p-3 border rounded-lg bg-muted/30">
+                  {["Jain", "Chef's Special", "Spicy", "Bestseller", "New", "Vegan", "Gluten-Free", "Healthy"].map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant={newItem.tags.includes(tag) ? "default" : "outline"}
+                      className="cursor-pointer hover:bg-primary/90 transition-colors select-none"
+                      onClick={() => {
+                        if (newItem.tags.includes(tag)) {
+                          setNewItem({ ...newItem, tags: newItem.tags.filter(t => t !== tag) });
+                        } else {
+                          setNewItem({ ...newItem, tags: [...newItem.tags, tag] });
+                        }
+                      }}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Click to select/deselect tags. These help customers filter menu items.
+                </p>
               </div>
 
               <Separator />
@@ -456,6 +484,7 @@ const Menu = () => {
                       size="sm"
                       className="gap-2"
                       disabled={isUploading}
+                      onClick={() => document.getElementById('image-file-upload').click()}
                     >
                       <Upload className="h-4 w-4" />
                       {isUploading ? "Uploading..." : "Upload Image"}
@@ -470,7 +499,7 @@ const Menu = () => {
                         onSuccess={handleUploadSuccess}
                         onError={handleUploadError}
                         multiple={false}
-                        type="image/*"
+                        accept="image/*"
                         id="image-file-upload"
                         folder="qrcode/menu_images"
                         onUploadStart={() => setUploading(true)}
@@ -495,11 +524,16 @@ const Menu = () => {
                       size="sm"
                       className="gap-2"
                       disabled={isUploading}
+                      onClick={() => document.getElementById('ar-file-upload').click()}
                     >
                       <Upload className="h-4 w-4" />
                       {isUploading ? "Uploading..." : "Upload AR Model"}
                     </Button>
-                    <IKContext>
+                    <IKContext
+                      publicKey={import.meta.env.VITE_REACT_APP_IMAGEKIT_PUBLIC_KEY}
+                      urlEndpoint={import.meta.env.VITE_REACT_APP_IMAGEKIT_URL_ENDPOINT}
+                      authenticator={authenticator}
+                    >
                       <IKUpload
                         className="hidden"
                         onSuccess={handleARUploadSuccess}
@@ -536,6 +570,7 @@ const Menu = () => {
                       status: "Available",
                       photo: "",
                       arModel: "",
+                      tags: [],
                     });
                   }}
                 >
@@ -603,6 +638,7 @@ const Menu = () => {
                     <TableHead>Category</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Tags</TableHead>
                     <TableHead>AR Model</TableHead>
                     <TableHead className="w-32">Actions</TableHead>
                   </TableRow>
@@ -629,12 +665,25 @@ const Menu = () => {
                         {formatINR(Number(item.price))}
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={item.status === "Available" ? "default" : "destructive"}
                           className="capitalize"
                         >
                           {item.status}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {item.tags && item.tags.length > 0 ? (
+                            item.tags.map((tag) => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-sm text-muted-foreground">-</span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         {(item.arModel || LOCAL_MODELS[item.name]) ? (

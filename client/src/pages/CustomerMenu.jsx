@@ -10,10 +10,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ShoppingCart, Plus, Minus, X, Smartphone, Eye, AlertCircle, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, X, Smartphone, Eye, AlertCircle, CheckCircle, Leaf, ChefHat, Flame, Award, Sparkles, Sprout, Wheat, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog as HeadlessDialog, DialogBackdrop, DialogPanel, DialogTitle as HeadlessDialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import MenuChatbot from '@/components/MenuChatbot';
 
 // AR model configuration
 const LOCAL_MODELS = {
@@ -35,6 +36,18 @@ const LOCAL_MODELS = {
   "Red Pepperoni Pizza": "/models/red peprika.glb",
   "Chicken Momos": "/models/momo_food.glb",
   "Veg Momos": "/models/momo_food.glb",
+};
+
+// Tag icons and colors configuration
+const TAG_CONFIG = {
+  "Jain": { icon: Leaf, color: "bg-green-100 text-green-700 border-green-300" },
+  "Chef's Special": { icon: ChefHat, color: "bg-purple-100 text-purple-700 border-purple-300" },
+  "Spicy": { icon: Flame, color: "bg-red-100 text-red-700 border-red-300" },
+  "Bestseller": { icon: Award, color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
+  "New": { icon: Sparkles, color: "bg-blue-100 text-blue-700 border-blue-300" },
+  "Vegan": { icon: Sprout, color: "bg-emerald-100 text-emerald-700 border-emerald-300" },
+  "Gluten-Free": { icon: Wheat, color: "bg-amber-100 text-amber-700 border-amber-300" },
+  "Healthy": { icon: Heart, color: "bg-pink-100 text-pink-700 border-pink-300" },
 };
 
 const CustomerMenu = () => {
@@ -82,15 +95,15 @@ const CustomerMenu = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders?table=${tableNum}`
         );
-        
+
         // Filter for active orders (not completed/cancelled)
         const orders = response.data.data || response.data;
-        const activeOrders = orders.filter(order => 
+        const activeOrders = orders.filter(order =>
           !['completed', 'cancelled'].includes(order.status?.toLowerCase())
         );
-        
+
         setExistingOrders(activeOrders);
-        
+
         // Auto-fill customer details from existing orders
         if (activeOrders.length > 0 && (!userName || !phoneNumber)) {
           const latestOrder = activeOrders[0]; // Get the most recent order
@@ -123,10 +136,10 @@ const CustomerMenu = () => {
       const existingItem = prevCart.find((cartItem) => cartItem._id === item._id);
       return existingItem
         ? prevCart.map((cartItem) =>
-            cartItem._id === item._id
-              ? { ...cartItem, quantity: cartItem.quantity + 1 }
-              : cartItem
-          )
+          cartItem._id === item._id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        )
         : [...prevCart, { ...item, quantity: 1 }];
     });
   };
@@ -137,7 +150,7 @@ const CustomerMenu = () => {
 
   const updateItemQuantity = (itemId, newQuantity) => {
     if (newQuantity < 1) return;
-    setCart(cart.map(item => 
+    setCart(cart.map(item =>
       item._id === itemId ? { ...item, quantity: newQuantity } : item
     ));
   };
@@ -155,12 +168,12 @@ const CustomerMenu = () => {
         toast.error("Please scan a valid table QR code");
         return;
       }
-  
+
       if (!userName?.trim() || !phoneNumber?.trim()) {
         toast.error("Please enter your name and phone number");
         return;
       }
-  
+
       if (cart.length === 0) {
         toast.error("Your cart is empty");
         return;
@@ -185,22 +198,22 @@ const CustomerMenu = () => {
       };
 
       // Check for existing order from same customer
-      const existingOrder = existingOrders.find(order => 
-        order.customerName === userName.trim() && 
+      const existingOrder = existingOrders.find(order =>
+        order.customerName === userName.trim() &&
         order.phoneNumber === phoneNumber.trim()
       );
 
       let response;
-      
+
       if (existingOrder) {
         // Update existing order by merging items
         const mergedItems = [...existingOrder.items];
-        
+
         cart.forEach(cartItem => {
           const existingItemIndex = mergedItems.findIndex(
             item => item._id === cartItem._id
           );
-          
+
           if (existingItemIndex >= 0) {
             mergedItems[existingItemIndex].quantity += cartItem.quantity;
           } else {
@@ -239,29 +252,29 @@ const CustomerMenu = () => {
         setOrderPlaced(true);
         setOrderNumber(order.orderId || "N/A");
         setCart([]);
-        
+
         toast.success(`Order #${order.orderId || order._id} placed successfully!`);
-        
+
         // Refresh existing orders
         const updatedResponse = await axios.get(
           `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/v1/orders?table=${tableNum}`
         );
         const updatedOrders = updatedResponse.data.data || updatedResponse.data;
-        setExistingOrders(updatedOrders.filter(order => 
+        setExistingOrders(updatedOrders.filter(order =>
           !['completed', 'cancelled'].includes(order.status?.toLowerCase())
         ));
-        
+
         setTimeout(() => setOrderPlaced(false), 5000);
       }
 
     } catch (error) {
       console.error("Order Error:", error);
-      const errorMessage = error.response?.data?.message || 
+      const errorMessage = error.response?.data?.message ||
         error.response?.data?.error ||
         "Order failed. Please check your connection and try again";
-      
+
       toast.error(errorMessage);
-      
+
       // Log detailed error for debugging
       if (error.response) {
         console.error("Server Error:", error.response.data);
@@ -292,8 +305,8 @@ const CustomerMenu = () => {
             style={{ width: '100%', height: '400px' }}
             alt="3D Model"
           >
-            <Button 
-              slot="ar-button" 
+            <Button
+              slot="ar-button"
               className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
             >
               <Smartphone className="h-4 w-4 mr-2" />
@@ -354,13 +367,33 @@ const CustomerMenu = () => {
                 <Badge variant="secondary" className="w-fit">
                   {item.category}
                 </Badge>
-                <Badge 
+                <Badge
                   variant={item.status === "Available" ? "default" : "destructive"}
                   className="w-fit"
                 >
                   {item.status}
                 </Badge>
               </div>
+
+              {/* Special Tags */}
+              {item.tags && item.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {item.tags.map((tag) => {
+                    const config = TAG_CONFIG[tag];
+                    if (!config) return null;
+                    const IconComponent = config.icon;
+                    return (
+                      <div
+                        key={tag}
+                        className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${config.color}`}
+                      >
+                        <IconComponent className="h-3 w-3" />
+                        <span>{tag}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardHeader>
 
             <CardContent className="pt-0">
@@ -543,7 +576,7 @@ const CustomerMenu = () => {
                         <p>₹{totalAmount.toFixed(2)}</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
-                      
+
                       {/* Customer Details */}
                       {existingOrders.length > 0 && (
                         <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -555,7 +588,7 @@ const CustomerMenu = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       <div className="mt-4 space-y-4">
                         <div>
                           <Label htmlFor="userName" className="block text-sm font-medium text-gray-700">
@@ -592,7 +625,7 @@ const CustomerMenu = () => {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="mt-6">
                         <button
                           onClick={placeOrder}
@@ -639,10 +672,34 @@ const CustomerMenu = () => {
       {/* AR Viewer Modal */}
       <ARModal />
 
+      {/* Tag Legend Footer */}
+      <div className="mt-12 mb-20 bg-muted/30 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-foreground mb-4 text-center">Menu Tags Guide</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {Object.entries(TAG_CONFIG).map(([tag, config]) => {
+            const IconComponent = config.icon;
+            return (
+              <div key={tag} className="flex items-center gap-2">
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${config.color}`}>
+                  <IconComponent className="h-3 w-3" />
+                  <span>{tag}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          Look for these tags to find dishes that match your preferences!
+        </p>
+      </div>
+
+      {/* AI Menu Chatbot */}
+      <MenuChatbot menuItems={menuItems} onAddToCart={addToCart} />
+
       {/* Add model-viewer script */}
-      <script 
-        type="module" 
-        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" 
+      <script
+        type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
         async
       />
     </div>
