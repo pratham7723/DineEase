@@ -478,6 +478,15 @@ const CustomerMenu = () => {
                         <p className="text-gray-500 text-center py-8">Your cart is empty.</p>
                       ) : (
                         <div className="flow-root">
+                          {/* Current Cart Header */}
+                          <div className="mb-4 pb-2 border-b border-gray-200">
+                            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                              <ShoppingCart className="h-5 w-5 text-[#123499]" />
+                              Current Cart ({cart.length} {cart.length === 1 ? 'item' : 'items'})
+                            </h3>
+                            <p className="text-sm text-gray-500 mt-1">Items ready to order</p>
+                          </div>
+
                           <ul role="list" className="-my-6 divide-y divide-gray-200">
                             {cart.map((item) => (
                               <li key={item._id} className="flex py-6">
@@ -547,84 +556,118 @@ const CustomerMenu = () => {
 
                   {cart.length > 0 && (
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                      {/* Existing Orders Summary */}
-                      {existingOrders.length > 0 && (
-                        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm font-medium text-blue-800">
-                              Active Orders ({existingOrders.length})
-                            </span>
-                          </div>
-                          <div className="space-y-1">
-                            {existingOrders.slice(0, 2).map((order, index) => (
-                              <div key={index} className="text-xs text-blue-700">
-                                Order #{order.orderId || index + 1}: {order.items.length} items (₹{order.total.toFixed(2)})
-                              </div>
-                            ))}
-                            {existingOrders.length > 2 && (
-                              <div className="text-xs text-blue-600 font-medium">
-                                +{existingOrders.length - 2} more orders
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
+                      {/* Subtotal - Prominent */}
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
                         <p>₹{totalAmount.toFixed(2)}</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
 
-                      {/* Customer Details */}
+                      {/* Existing Orders - Collapsible */}
                       {existingOrders.length > 0 && (
-                        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                            <span className="text-sm font-medium text-green-800">
-                              Customer details pre-filled from existing order
-                            </span>
+                        <details className="mt-3 group">
+                          <summary className="cursor-pointer px-3 py-2 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <CheckCircle className="h-3.5 w-3.5 text-blue-600" />
+                                <span className="text-xs font-medium text-blue-800">
+                                  Active Orders ({existingOrders.length})
+                                </span>
+                              </div>
+                              <svg className="h-3.5 w-3.5 text-blue-600 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </div>
+                          </summary>
+                          <div className="mt-1.5 px-3 py-2 bg-blue-50/50 border border-blue-200 rounded-md space-y-0.5">
+                            {existingOrders.map((order, index) => (
+                              <div key={index} className="text-xs text-blue-700">
+                                Order #{order.orderId || index + 1}: {order.items.length} items (₹{order.total.toFixed(2)})
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      )}
+
+                      {/* Customer Details - Collapsible when pre-filled */}
+                      {existingOrders.length > 0 ? (
+                        <details className="mt-3 group">
+                          <summary className="cursor-pointer px-3 py-2 bg-green-50 border border-green-200 rounded-md hover:bg-green-100 transition-colors">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                                <span className="text-xs font-medium text-green-800">
+                                  Customer Details (pre-filled)
+                                </span>
+                              </div>
+                              <svg className="h-3.5 w-3.5 text-green-600 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </div>
+                          </summary>
+                          <div className="mt-1.5 px-3 py-2 bg-green-50/50 border border-green-200 rounded-md space-y-3">
+                            <div>
+                              <Label htmlFor="userName" className="block text-sm font-medium text-gray-700">
+                                Your Name
+                              </Label>
+                              <Input
+                                id="userName"
+                                type="text"
+                                placeholder="Enter your name"
+                                value={userName}
+                                onChange={(e) => setUserName(e.target.value)}
+                                required
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                                Phone Number
+                              </Label>
+                              <Input
+                                id="phoneNumber"
+                                type="tel"
+                                placeholder="Enter phone number"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                required
+                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
+                              />
+                            </div>
+                          </div>
+                        </details>
+                      ) : (
+                        <div className="mt-4 space-y-4">
+                          <div>
+                            <Label htmlFor="userName" className="block text-sm font-medium text-gray-700">
+                              Your Name
+                            </Label>
+                            <Input
+                              id="userName"
+                              type="text"
+                              placeholder="Enter your name"
+                              value={userName}
+                              onChange={(e) => setUserName(e.target.value)}
+                              required
+                              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                              Phone Number
+                            </Label>
+                            <Input
+                              id="phoneNumber"
+                              type="tel"
+                              placeholder="Enter phone number"
+                              value={phoneNumber}
+                              onChange={(e) => setPhoneNumber(e.target.value)}
+                              required
+                              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
+                            />
                           </div>
                         </div>
                       )}
-
-                      <div className="mt-4 space-y-4">
-                        <div>
-                          <Label htmlFor="userName" className="block text-sm font-medium text-gray-700">
-                            Your Name
-                            {existingOrders.length > 0 && (
-                              <span className="text-green-600 ml-1 text-xs">(pre-filled)</span>
-                            )}
-                          </Label>
-                          <Input
-                            id="userName"
-                            type="text"
-                            placeholder="Enter your name"
-                            value={userName}
-                            onChange={(e) => setUserName(e.target.value)}
-                            required
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-                            Phone Number
-                            {existingOrders.length > 0 && (
-                              <span className="text-green-600 ml-1 text-xs">(pre-filled)</span>
-                            )}
-                          </Label>
-                          <Input
-                            id="phoneNumber"
-                            type="tel"
-                            placeholder="Enter phone number"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            required
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#123499] focus:ring-[#123499] sm:text-sm"
-                          />
-                        </div>
-                      </div>
 
                       <div className="mt-6">
                         <button
@@ -694,7 +737,11 @@ const CustomerMenu = () => {
       </div>
 
       {/* AI Menu Chatbot */}
-      <MenuChatbot menuItems={menuItems} onAddToCart={addToCart} />
+      <MenuChatbot
+        menuItems={menuItems}
+        onAddToCart={addToCart}
+        onOpenCart={() => setCartOpen(true)}
+      />
 
       {/* Add model-viewer script */}
       <script

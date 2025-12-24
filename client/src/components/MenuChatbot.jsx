@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, X, Send, Bot, User, Sparkles, ChefHat, TrendingUp, DollarSign, MapPin, Clock, Phone, Mail, Info } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Sparkles, ChefHat, TrendingUp, DollarSign, MapPin, Clock, Phone, Mail, Info, Heart, CheckCircle, ShoppingCart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Restaurant Information
@@ -25,7 +25,7 @@ const RESTAURANT_INFO = {
   ]
 };
 
-const MenuChatbot = ({ menuItems, onAddToCart }) => {
+const MenuChatbot = ({ menuItems, onAddToCart, onOpenCart }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -292,6 +292,26 @@ const MenuChatbot = ({ menuItems, onAddToCart }) => {
       responseText = '⚡ Quick bites:';
       suggestions = ["Show me full meals", "Drinks", "Desserts"];
     }
+    // Conversation endings and thank you
+    else if (message.includes("that's all") || message.includes("thats all") || message.includes("that is all")) {
+      responseText = '🙏 **Thank you for your order!**\n\nYour items have been added to the cart. When you\'re ready, you can:\n\n✅ Review your cart\n✅ Place your order\n✅ Continue browsing\n\nEnjoy your meal at DineEase!';
+      suggestions = ["Browse more", "What's your location?", "Contact info"];
+      restaurantInfo = { type: 'thankyou', icon: <CheckCircle className="h-4 w-4" />, hasCartButton: true };
+    }
+    else if (message.includes('thank') || message.includes('thanks')) {
+      responseText = '😊 **You\'re welcome!**\n\nIt was my pleasure helping you today. If you need anything else, just ask!\n\nHave a wonderful dining experience!';
+      suggestions = ["Show me more", "What's your location?", "Contact info"];
+      restaurantInfo = { type: 'thanks', icon: <Heart className="h-4 w-4" /> };
+    }
+    else if (message.includes('bye') || message.includes('goodbye') || message.includes('see you')) {
+      responseText = '👋 **Goodbye!**\n\nThank you for choosing DineEase. We look forward to serving you again!\n\nHave a great day!';
+      suggestions = ["Browse menu", "What's your location?", "About us"];
+      restaurantInfo = { type: 'goodbye', icon: <Heart className="h-4 w-4" /> };
+    }
+    else if (message.includes('help') || message.includes('what can you do')) {
+      responseText = '🤖 **I\'m your AI dining assistant!**\n\nI can help you with:\n\n🍽️ Menu recommendations (Jain, Vegan, Spicy, etc.)\n📍 Restaurant location & hours\n👨‍🍳 Chef\'s specials & bestsellers\n💰 Budget-friendly options\n📞 Contact information\n\nJust ask me anything!';
+      suggestions = ["Show me popular items", "What's your location?", "Chef's special"];
+    }
     // Default - show variety
     else {
       const categories = [...new Set(menuItems.map(item => item.category))];
@@ -355,10 +375,34 @@ const MenuChatbot = ({ menuItems, onAddToCart }) => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setInputMessage(suggestion);
+    // Immediately add user message
+    const userMessage = {
+      id: messages.length + 1,
+      type: 'user',
+      text: suggestion,
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsTyping(true);
+
+    // Get AI response
     setTimeout(() => {
-      handleSendMessage();
-    }, 100);
+      const { recommendations, responseText, suggestions: newSuggestions, restaurantInfo } = getResponse(suggestion);
+
+      const botMessage = {
+        id: messages.length + 2,
+        type: 'bot',
+        text: responseText,
+        recommendations: recommendations,
+        suggestions: newSuggestions,
+        restaurantInfo: restaurantInfo,
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+      setIsTyping(false);
+    }, 800);
   };
 
   const handleAddToCart = (item) => {
@@ -493,12 +537,15 @@ const MenuChatbot = ({ menuItems, onAddToCart }) => {
 
                           {/* Message Content */}
                           <div>
-                            <div className={`rounded-2xl px-4 py-2 ${message.type === 'user'
-                              ? 'bg-[#123499] text-white'
-                              : 'bg-white border border-gray-200 text-gray-800'
-                              }`}>
-                              <p className="text-sm">{message.text}</p>
-                            </div>
+                            {/* Only show regular message bubble if no restaurantInfo */}
+                            {!message.restaurantInfo && (
+                              <div className={`rounded-2xl px-4 py-2 ${message.type === 'user'
+                                ? 'bg-[#123499] text-white'
+                                : 'bg-white border border-gray-200 text-gray-800'
+                                }`}>
+                                <p className="text-sm whitespace-pre-line">{message.text}</p>
+                              </div>
+                            )}
 
                             {/* Recommendations */}
                             {message.recommendations && message.recommendations.length > 0 && (
@@ -575,6 +622,21 @@ const MenuChatbot = ({ menuItems, onAddToCart }) => {
                                     <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
                                       {message.text}
                                     </p>
+
+                                    {/* View Cart Button for Thank You message */}
+                                    {message.restaurantInfo.hasCartButton && onOpenCart && (
+                                      <Button
+                                        onClick={() => {
+                                          onOpenCart();
+                                          setIsOpen(false);
+                                        }}
+                                        className="mt-4 w-full bg-gradient-to-r from-[#123499] to-[#1e4fd6] hover:from-[#0f2a7a] hover:to-[#123499] text-white font-semibold shadow-lg"
+                                        size="sm"
+                                      >
+                                        <ShoppingCart className="h-4 w-4 mr-2" />
+                                        View Cart & Place Order
+                                      </Button>
+                                    )}
                                   </div>
                                 </div>
                               </div>
