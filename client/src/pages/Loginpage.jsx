@@ -148,21 +148,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="remember"
-                id="remember"
-                checked={formData.remember}
-                onChange={handleChange}
-                className="h-4 w-4 text-[#123499] focus:ring-[#123499] border-gray-300 rounded cursor-pointer"
-              />
-              <label htmlFor="remember" className="ml-2 block text-gray-700 text-sm cursor-pointer">
-                Remember me for 30 days
-              </label>
-            </div>
-
             {/* Error Message */}
             {loginError && (
               <motion.div
